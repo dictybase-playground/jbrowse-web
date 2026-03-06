@@ -1,0 +1,13 @@
+{
+  "name": "jbrowse-launch",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "create": "bun run jbrowse create",
+    "aa": "bun run jbrowse add-assembly"
+  },
+  "devDependencies": {
+    "@jbrowse/cli": "^4.1.13"
+  }
+}
