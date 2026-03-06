@@ -1,5 +1,4 @@
 outdir := "jbrowse2"
-remoteUrl := ""
 
 add-assembly fasta_file:
   samtools faidx {{fasta_file}}
@@ -9,10 +8,6 @@ add-assembly-remote fasta_file:
   bun run aa {{fasta_file}}
 
 create:
-  bun run create {{outdir}}
+  bun run create {{outdir}} --force
   rm -rf {{outdir}}/test_data
   mv ./config.json {{outdir}}/config.json
-
-# serve:
-# fetch-config:
-	
