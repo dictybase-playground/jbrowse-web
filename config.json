@@ -8,11 +8,11 @@
         "adapter": {
           "type": "IndexedFastaAdapter",
           "fastaLocation": {
-            "uri": "http://localhost:3000/canonical_core.fa",
+            "uri": "http://localhost:8080/canonical_core.fa",
             "locationType": "UriLocation"
           },
           "faiLocation": {
-            "uri": "http://localhost:3000/canonical_core.fa.fai",
+            "uri": "http://localhost:8080/canonical_core.fa.fai",
             "locationType": "UriLocation"
           }
         }
