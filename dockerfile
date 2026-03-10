@@ -1,24 +1,15 @@
-FROM node:22-alpine AS build-env
-COPY . /app
-WORKDIR /app
+FROM golang:1.26.1-alpine3.23 AS go-builder
 
+RUN apk update \
+  && apk add git \
+  && git clone https://github.com/caddyserver/caddy.git \
+  && cd caddy/cmd/caddy \
+  && go build -o /usr/local/bin/app 
 
+FROM gcr.io/distroless/base-debian12 AS runner
+COPY --from=go-builder /usr/local/bin/app /usr/local/bin/app
+COPY ./jbrowse2 /www
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-FROM gcr.io/distroless/nodejs22-debian13 AS runner
-COPY --from=build-env /app /app
-WORKDIR /app
+WORKDIR /www
+EXPOSE 3000
+ENTRYPOINT ["/usr/local/bin/app", "file-server", "--listen", ":3000"]
