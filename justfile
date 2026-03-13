@@ -1,5 +1,6 @@
 outdir := "jbrowse2"
-asset_url := "http://localhost:8080"
+asset_url := "http://localhost:3000"
+asset_dir := "data"
 local_test_data_dir := "test_data"
 
 dev: load-config-local serve
@@ -16,17 +17,15 @@ serve-app:
 serve-assets:
   caddy file-server --root {{local_test_data_dir}} --listen :8080
 
-
 add-assembly fasta_file:
   samtools faidx {{local_test_data_dir}}/{{fasta_file}}
   bun run aa \
     --force \
     --out config.local.json \
-    {{asset_url}}/{{fasta_file}} 
+    {{asset_url}}/{{local_test_data_dir}}/{{fasta_file}} 
 
 add-assembly-remote fasta_file:
   bun run aa {{fasta_file}}
-
 
 load-config: 
   cp ./config.json {{outdir}}/config.json
