@@ -1,6 +1,7 @@
-package main
+package server
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"time"
@@ -13,16 +14,29 @@ func logRequest(h http.Handler) http.Handler {
 		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
 	})
 }
-func main() {
+
+func StartServer(ctx context.Context) error {
 	appFiles := http.FileServer(http.Dir("./jbrowse2"))
 	dataFiles := http.FileServer(http.Dir("./test_data"))
 
-	http.Handle("/", logRequest(appFiles))
-	http.Handle("/test_data/", http.StripPrefix("/test_data/", logRequest(dataFiles)))
+	mux := http.NewServeMux()
+	mux.Handle("/", logRequest(appFiles))
+	mux.Handle("/test_data/", http.StripPrefix("/test_data/", logRequest(dataFiles)))
 
-	log.Print("Listening on :3000...")
-	err := http.ListenAndServe(":3000", nil)
-	if err != nil {
-		log.Fatal(err)
+	srv := &http.Server{
+		Addr:    ":3000",
+		Handler: mux,
 	}
+
+	go func() {
+		log.Print("Listening on :3000...")
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatal(err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Println("Shutting down server...")
+
+	return srv.Shutdown(ctx)
 }
