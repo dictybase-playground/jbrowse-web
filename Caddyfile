@@ -1,0 +1,11 @@
+:3000 {
+	# Serve jbrowse2 files at root
+	root * ./jbrowse2
+	file_server
+
+	# Serve test_data files at /test_data
+	handle /test_data/* {
+		root * ./
+		file_server
+	}
+}
