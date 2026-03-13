@@ -7,6 +7,7 @@ RUN apk update \
   && go build -o /usr/local/bin/app 
 
 FROM gcr.io/distroless/base-debian12 AS runner
+
 COPY --from=go-builder /usr/local/bin/app /usr/local/bin/app
 COPY ./jbrowse2 /www
 
