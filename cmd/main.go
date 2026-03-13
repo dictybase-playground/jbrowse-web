@@ -2,9 +2,20 @@ package main
 
 import (
 	"context"
+	"dictybase-playground/jbrowse-cli/internal/server"
 	cli "github.com/urfave/cli/v3"
 	"os"
 )
+
+func serverCommands() *cli.Command {
+	return &cli.Command{
+		Name:  "dev",
+		Usage: "Starts development server",
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return server.StartServer(ctx)
+		},
+	}
+}
 
 func jbrowseCommands() *cli.Command {
 	return &cli.Command{
@@ -28,6 +39,7 @@ func setupApp() *cli.Command {
 		Usage: "Jbrowse management tools",
 		Commands: []*cli.Command{
 			jbrowseCommands(),
+			serverCommands(),
 		},
 	}
 }
