@@ -8,14 +8,8 @@ dev: load-config-local serve
 load-config-local:
   cp ./config.local.json {{outdir}}/config.json
 
-[parallel]
-serve: serve-app serve-assets
-
-serve-app:
-  caddy file-server --root {{outdir}} --listen :3000
-
-serve-assets:
-  caddy file-server --root {{local_test_data_dir}} --listen :8080
+serve: 
+  go run ./cmd/main.go dev
 
 add-assembly fasta_file:
   samtools faidx {{local_test_data_dir}}/{{fasta_file}}
