@@ -67,15 +67,17 @@ func isNotPrerelease(release *gh.RepositoryRelease) bool {
 	return !(*release.Prerelease)
 }
 
-func getAssetName(asset *gh.ReleaseAsset) string { return asset.GetName() }
-func getAssetID(asset *gh.ReleaseAsset) int64    { return asset.GetID() }
+func isVersionedRelease(release *gh.RepositoryRelease) bool {
+	return F.Pipe1(release.GetTagName(), S.Includes("v"))
+}
+func getAssetID(asset *gh.ReleaseAsset) int64 { return asset.GetID() }
 
 func downloadAsset(ghm *GithubManager, ctx context.Context, id int64) (io.ReadCloser, string, error) {
 	return ghm.client.Repositories.DownloadReleaseAsset(ctx, ghm.owner, ghm.repo, id, http.DefaultClient)
 }
 
 func isBuildAsset(asset *gh.ReleaseAsset) bool {
-	return F.Pipe2(asset, getAssetName, S.Includes("jbrowse-web"))
+	return F.Pipe1(asset.GetName(), S.Includes("jbrowse-web"))
 }
 
 func hasBuildAsset(release *gh.RepositoryRelease) bool {
@@ -83,13 +85,18 @@ func hasBuildAsset(release *gh.RepositoryRelease) bool {
 }
 
 func (ghm *GithubManager) FetchReleases(ctx context.Context) ([]*gh.RepositoryRelease, error) {
-	versions, _, err := ghm.client.Repositories.ListReleases(ctx, ghm.owner, ghm.repo, &gh.ListOptions{})
+	releases, _, err := ghm.client.Repositories.ListReleases(ctx, ghm.owner, ghm.repo, &gh.ListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("could not get repository releases: %s", err)
 	}
-	filteredReleases := F.Pipe2(versions, A.Filter(isNotPrerelease), A.Filter(hasBuildAsset))
+	filteredReleases := F.Pipe3(releases, A.Filter(isVersionedRelease), A.Filter(isNotPrerelease), A.Filter(hasBuildAsset))
 
 	return filteredReleases, nil
+}
+
+func (ghm *GithubManager) downloadAsset(ctx context.Context, id int64) (io.ReadCloser, error) {
+	rc, _, err := ghm.client.Repositories.DownloadReleaseAsset(ctx, ghm.owner, ghm.repo, id, http.DefaultClient)
+	return rc, err
 }
 
 // Get the latest release with that has build assets labeled `jbrowse-web`
@@ -106,10 +113,14 @@ func Create(ctx context.Context) error {
 		return fmt.Errorf("could not get latest repository release: %s", err)
 	}
 
-	F.Pipe3(latest.Assets, A.FindFirst(isBuildAsset), O.Map(getAssetID), O.Fold(
-		func() error { return nil },
-		func(id int64) error { return nil },
-	))
+	F.Pipe3(
+		latest.Assets,
+		A.FindFirst(isBuildAsset),
+		O.Map(getAssetID),
+		O.Fold(
+			func() error { return nil },
+			func(id int64) error { return nil },
+		))
 
 	return nil
 }
