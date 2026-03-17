@@ -41,16 +41,16 @@ func isNotPrerelease(release *gh.RepositoryRelease) bool {
 func isVersionedRelease(release *gh.RepositoryRelease) bool {
 	return F.Pipe1(release.GetTagName(), S.Includes("v"))
 }
-func getAssetID(asset *gh.ReleaseAsset) int64 { return asset.GetID() }
-
-func isBuildAsset(asset *gh.ReleaseAsset) bool {
-	return F.Pipe1(asset.GetName(), S.Includes("jbrowse-web"))
-}
 
 func hasBuildAsset(release *gh.RepositoryRelease) bool {
 	return F.Pipe1(release.Assets, A.Any(isBuildAsset))
 }
 
+func isBuildAsset(asset *gh.ReleaseAsset) bool {
+	return F.Pipe1(asset.GetName(), S.Includes("jbrowse-web"))
+}
+
+func getAssetID(asset *gh.ReleaseAsset) int64 { return asset.GetID() }
 func (ghm *githubManager) FetchReleases(ctx context.Context) ([]*gh.RepositoryRelease, error) {
 	releases, _, err := ghm.client.Repositories.ListReleases(ctx, ghm.owner, ghm.repo, &gh.ListOptions{})
 	if err != nil {
