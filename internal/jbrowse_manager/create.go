@@ -65,10 +65,6 @@ func isNotPrerelease(release *gh.RepositoryRelease) bool {
 	return !(*release.Prerelease)
 }
 
-// func isBuildAsset(asset *gh.ReleaseAsset) bool {
-// 	return asset.Name != nil && strings.Contains(*asset.Name, "jbrowse-web")
-// }
-
 func getAssetName(asset *gh.ReleaseAsset) string { return *asset.Name }
 
 func hasBuildAsset(release *gh.RepositoryRelease) bool {
