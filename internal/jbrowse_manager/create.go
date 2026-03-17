@@ -3,11 +3,20 @@ package jbrowse_manager
 import (
 	"context"
 	"fmt"
+	A "github.com/IBM/fp-go/array"
+	F "github.com/IBM/fp-go/function"
+	S "github.com/IBM/fp-go/string"
 	gh "github.com/google/go-github/v84/github"
-	cli "github.com/urfave/cli/v3"
 	"net/http"
 	"strings"
+	"time"
 )
+
+type GithubManager struct {
+	client *gh.Client
+	owner  string
+	repo   string
+}
 
 func listReleases(ctx context.Context, client *gh.Client) ([]*gh.RepositoryRelease, error) {
 	var filteredReleases []*gh.RepositoryRelease
@@ -41,15 +50,56 @@ func listReleases(ctx context.Context, client *gh.Client) ([]*gh.RepositoryRelea
 	return filteredReleases, nil
 }
 
-func Create(ctx context.Context, cmd *cli.Command) error {
-	client := gh.NewClient(&http.Client{Timeout: 10_000})
+func (ghm *GithubManager) getLatestRelease(ctx context.Context) (*gh.RepositoryRelease, error) {
 
-	latest, _, err := client.Repositories.GetLatestRelease(ctx, client)
+	latest, _, err := ghm.client.Repositories.GetLatestRelease(ctx, ghm.owner, ghm.repo)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not get latest repository release: %s", err)
+	}
+
+	return latest, nil
+}
+
+func isNotPrerelease(release *gh.RepositoryRelease) bool {
+	return !(*release.Prerelease)
+}
+
+// func isBuildAsset(asset *gh.ReleaseAsset) bool {
+// 	return asset.Name != nil && strings.Contains(*asset.Name, "jbrowse-web")
+// }
+
+func getAssetName(asset *gh.ReleaseAsset) string { return *asset.Name }
+
+func hasBuildAsset(release *gh.RepositoryRelease) bool {
+	return F.Pipe2(release.Assets, A.Map(getAssetName), A.Any(S.Includes("jbrowse-web")))
+}
+
+func (ghm *GithubManager) FetchReleases(ctx context.Context) ([]*gh.RepositoryRelease, error) {
+	versions, _, err := ghm.client.Repositories.ListReleases(ctx, ghm.owner, ghm.repo, &gh.ListOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("could not get repository releases: %s", err)
+	}
+	filteredReleases := F.Pipe2(versions, A.Filter(isNotPrerelease), A.Filter(hasBuildAsset))
+
+	return filteredReleases, nil
+}
+
+// Get the latest release with that has build assets labeled `jbrowse-web`
+func Create(ctx context.Context) error {
+	ghm := &GithubManager{
+		client: gh.NewClient(&http.Client{Timeout: time.Second * 10}),
+		owner:  "GMOD",
+		repo:   "jbrowse-components",
+	}
+
+	latest, err := ghm.getLatestRelease(ctx)
 
 	if err != nil {
 		return fmt.Errorf("could not get latest repository release: %s", err)
 	}
 
-	// TODO: Process filtered releases
+	fmt.Println(latest.Assets)
+
 	return nil
 }
