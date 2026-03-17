@@ -3,10 +3,12 @@ package jbrowse_manager
 import (
 	"context"
 	"fmt"
-	A "github.com/IBM/fp-go/array"
-	F "github.com/IBM/fp-go/function"
-	S "github.com/IBM/fp-go/string"
+	A "github.com/IBM/fp-go/v2/array"
+	F "github.com/IBM/fp-go/v2/function"
+	O "github.com/IBM/fp-go/v2/option"
+	S "github.com/IBM/fp-go/v2/string"
 	gh "github.com/google/go-github/v84/github"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -65,10 +67,19 @@ func isNotPrerelease(release *gh.RepositoryRelease) bool {
 	return !(*release.Prerelease)
 }
 
-func getAssetName(asset *gh.ReleaseAsset) string { return *asset.Name }
+func getAssetName(asset *gh.ReleaseAsset) string { return asset.GetName() }
+func getAssetID(asset *gh.ReleaseAsset) int64    { return asset.GetID() }
+
+func downloadAsset(ghm *GithubManager, ctx context.Context, id int64) (io.ReadCloser, string, error) {
+	return ghm.client.Repositories.DownloadReleaseAsset(ctx, ghm.owner, ghm.repo, id, http.DefaultClient)
+}
+
+func isBuildAsset(asset *gh.ReleaseAsset) bool {
+	return F.Pipe2(asset, getAssetName, S.Includes("jbrowse-web"))
+}
 
 func hasBuildAsset(release *gh.RepositoryRelease) bool {
-	return F.Pipe2(release.Assets, A.Map(getAssetName), A.Any(S.Includes("jbrowse-web")))
+	return F.Pipe1(release.Assets, A.Any(isBuildAsset))
 }
 
 func (ghm *GithubManager) FetchReleases(ctx context.Context) ([]*gh.RepositoryRelease, error) {
@@ -95,7 +106,10 @@ func Create(ctx context.Context) error {
 		return fmt.Errorf("could not get latest repository release: %s", err)
 	}
 
-	fmt.Println(latest.Assets)
+	F.Pipe3(latest.Assets, A.FindFirst(isBuildAsset), O.Map(getAssetID), O.Fold(
+		func() error { return nil },
+		func(id int64) error { return nil },
+	))
 
 	return nil
 }
