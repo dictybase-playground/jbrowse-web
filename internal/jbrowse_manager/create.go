@@ -3,93 +3,93 @@ package jbrowse_manager
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
-	S "github.com/IBM/fp-go/v2/string"
 	gh "github.com/google/go-github/v84/github"
-	"io"
-	"net/http"
-	"time"
 )
 
-var (
-	downloadAsset = F.Bind12of3(E.Eitherize3(uncurriedDownloadAsset))
-)
-
-type githubManager struct {
-	client *gh.Client
-	owner  string
-	repo   string
+type DownloadResult struct {
+	Body    io.ReadCloser
+	Version string
 }
 
-func (ghm *githubManager) getLatestRelease(ctx context.Context) (*gh.RepositoryRelease, error) {
-	latest, _, err := ghm.client.Repositories.GetLatestRelease(ctx, ghm.owner, ghm.repo)
-
-	if err != nil {
-		return nil, fmt.Errorf("could not get latest repository release: %s", err)
-	}
-
-	return latest, nil
+type releaseAsset struct {
+	ID      int64
+	Version string
 }
 
-func isNotPrerelease(release *gh.RepositoryRelease) bool {
-	return !(*release.Prerelease)
+type CreateParams struct {
+	Cfg Config
+	Ctx context.Context
 }
 
-func isVersionedRelease(release *gh.RepositoryRelease) bool {
-	return F.Pipe1(release.GetTagName(), S.Includes("v"))
-}
-func getAssetID(asset *gh.ReleaseAsset) int64 { return asset.GetID() }
-
-func isBuildAsset(asset *gh.ReleaseAsset) bool {
-	return F.Pipe1(asset.GetName(), S.Includes("jbrowse-web"))
+func getLatestRelease(cfg Config, ctx context.Context) IOE.IOEither[error, *gh.RepositoryRelease] {
+	return IOE.TryCatchError(func() (*gh.RepositoryRelease, error) {
+		release, _, err := cfg.Client.Repositories.GetLatestRelease(ctx, cfg.Owner, cfg.Repo)
+		return release, err
+	})
 }
 
-func hasBuildAsset(release *gh.RepositoryRelease) bool {
-	return F.Pipe1(release.Assets, A.Any(isBuildAsset))
+func FetchReleases(cfg Config, ctx context.Context) IOE.IOEither[error, []*gh.RepositoryRelease] {
+	return F.Pipe1(
+		IOE.TryCatchError(func() ([]*gh.RepositoryRelease, error) {
+			releases, _, err := cfg.Client.Repositories.ListReleases(ctx, cfg.Owner, cfg.Repo, &gh.ListOptions{})
+			return releases, err
+		}),
+		IOE.Map[error](A.Filter(isDownloadableRelease)),
+	)
 }
 
-func (ghm *githubManager) FetchReleases(ctx context.Context) ([]*gh.RepositoryRelease, error) {
-	releases, _, err := ghm.client.Repositories.ListReleases(ctx, ghm.owner, ghm.repo, &gh.ListOptions{})
-	if err != nil {
-		return nil, fmt.Errorf("could not get repository releases: %s", err)
-	}
-	filteredReleases := F.Pipe3(releases, A.Filter(isVersionedRelease), A.Filter(isNotPrerelease), A.Filter(hasBuildAsset))
-
-	return filteredReleases, nil
+func downloadAsset(cfg Config, ctx context.Context, id int64) IOE.IOEither[error, io.ReadCloser] {
+	return IOE.TryCatchError(func() (io.ReadCloser, error) {
+		rc, _, err := cfg.Client.Repositories.DownloadReleaseAsset(ctx, cfg.Owner, cfg.Repo, id, http.DefaultClient)
+		return rc, err
+	})
 }
 
-func uncurriedDownloadAsset(ghm *githubManager, ctx context.Context, id int64) (io.ReadCloser, error) {
-	rc, _, err := ghm.client.Repositories.DownloadReleaseAsset(ctx, ghm.owner, ghm.repo, id, http.DefaultClient)
-	return rc, err
-}
-
-// Get the latest release with that has build assets labeled `jbrowse-web`
-func Create(ctx context.Context) error {
-	ghm := &githubManager{
-		client: gh.NewClient(&http.Client{Timeout: time.Second * 10}),
-		owner:  "GMOD",
-		repo:   "jbrowse-components",
-	}
-
-	latest, err := ghm.getLatestRelease(ctx)
-
-	if err != nil {
-		return fmt.Errorf("could not get latest repository release: %s", err)
-	}
-
-	F.Pipe5(
-		latest.Assets,
+func extractReleaseAsset(release *gh.RepositoryRelease) E.Either[error, releaseAsset] {
+	return F.Pipe5(
+		release.Assets,
 		A.FindFirst(isBuildAsset),
 		O.Map(getAssetID),
-		E.FromOption[int64](func() error { return fmt.Errorf("could not find build asset in latest release") }),
+		E.FromOption[int64](func() error {
+			return fmt.Errorf("no jbrowse-web asset in release %s", release.GetTagName())
+		}),
 		E.FilterOrElse(
 			func(id int64) bool { return id != 0 },
-			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) }),
-		E.Map[error](downloadAsset(ghm, ctx)),
+			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) },
+		),
+		E.Map[error](func(id int64) releaseAsset {
+			return releaseAsset{ID: id, Version: release.GetTagName()}
+		}),
 	)
+}
 
-	return nil
+func Create(params CreateParams) IOE.IOEither[error, DownloadResult] {
+	return F.Pipe2(
+		getLatestRelease(params.Cfg, params.Ctx),
+		IOE.ChainEitherK(extractReleaseAsset),
+		IOE.Chain(func(ra releaseAsset) IOE.IOEither[error, DownloadResult] {
+			return F.Pipe1(
+				downloadAsset(params.Cfg, params.Ctx, ra.ID),
+				IOE.Map[error](func(body io.ReadCloser) DownloadResult {
+					return DownloadResult{Body: body, Version: ra.Version}
+				}),
+			)
+		}),
+	)
+}
+
+func RunCreate(params CreateParams) E.Either[error, DownloadResult] {
+	return toEither(Create(params))
+}
+
+func toEither[ERR, A any](ioe IOE.IOEither[ERR, A]) E.Either[ERR, A] {
+	return ioe()
 }
