@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	E "github.com/IBM/fp-go/v2/either"
-	F "github.com/IBM/fp-go/v2/function"
 	gh "github.com/google/go-github/v84/github"
 )
 
@@ -37,35 +36,4 @@ func TestFetchReleases(t *testing.T) {
 		}
 		t.Logf("  - %s", release.GetTagName())
 	}
-}
-
-func TestCreate(t *testing.T) {
-	result := F.Pipe2(
-		CreateParams{
-			Cfg: NewConfig(),
-			Ctx: context.Background(),
-		},
-		Create,
-		toEither,
-	)
-
-	if E.IsLeft(result) {
-		msg := E.Fold(
-			func(err error) string { return err.Error() },
-			func(_ DownloadResult) string { return "" },
-		)(result)
-		t.Fatalf("Create failed: %s", msg)
-	}
-
-	dr := E.GetOrElse(
-		func(_ error) DownloadResult { return DownloadResult{} },
-	)(
-		result,
-	)
-	if dr.Body == nil {
-		t.Fatal("expected non-nil Body in DownloadResult")
-	}
-	defer dr.Body.Close()
-
-	t.Logf("Create succeeded: version=%s", dr.Version)
 }

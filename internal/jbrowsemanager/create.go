@@ -107,23 +107,14 @@ func extractReleaseAsset(
 			func(id int64) bool { return id != 0 },
 			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) },
 		),
-		E.Map[error](func(id int64) P.Pair[CreateParams, releaseAsset] {
-			return P.MakePair(P.First(pair), releaseAsset{
-				ID:      id,
-				Version: release.GetTagName(),
-			})
-		}),
-	)
-}
-
-func Create(
-	params CreateParams,
-) IOE.IOEither[error, DownloadResult] {
-	return F.Pipe3(
-		params,
-		getLatestRelease,
-		IOE.ChainEitherK(extractReleaseAsset),
-		IOE.Chain(downloadAsset),
+		E.Map[error](
+			func(id int64) P.Pair[CreateParams, releaseAsset] {
+				return P.MakePair(P.First(pair), releaseAsset{
+					ID:      id,
+					Version: release.GetTagName(),
+				})
+			},
+		),
 	)
 }
 
