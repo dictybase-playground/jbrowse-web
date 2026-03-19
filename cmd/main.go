@@ -2,9 +2,15 @@ package main
 
 import (
 	"context"
-	"dictybase-playground/jbrowse-cli/internal/server"
-	cli "github.com/urfave/cli/v3"
+	"fmt"
 	"os"
+
+	"dictybase-playground/jbrowse-cli/internal/jbrowse_manager"
+	"dictybase-playground/jbrowse-cli/internal/server"
+
+	E "github.com/IBM/fp-go/v2/either"
+	F "github.com/IBM/fp-go/v2/function"
+	cli "github.com/urfave/cli/v3"
 )
 
 func serverCommands() *cli.Command {
@@ -27,8 +33,19 @@ func jbrowseCommands() *cli.Command {
 				Usage: "specifies the version of jbrowse to fetch",
 			},
 		},
-		Action: func(context.Context, *cli.Command) error {
-			return nil
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return F.Pipe2(
+				jbrowse_manager.CreateParams{Cfg: jbrowse_manager.NewConfig(), Ctx: ctx},
+				jbrowse_manager.RunCreate,
+				E.Fold(
+					F.Identity[error],
+					func(dr jbrowse_manager.DownloadResult) error {
+						defer dr.Body.Close()
+						fmt.Printf("Downloaded jbrowse-web %s\n", dr.Version)
+						return nil
+					},
+				),
+			)
 		},
 	}
 }
@@ -45,7 +62,6 @@ func setupApp() *cli.Command {
 }
 
 func main() {
-
 	app := setupApp()
 
 	if err := app.Run(context.Background(), os.Args); err != nil {
