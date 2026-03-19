@@ -8,11 +8,18 @@ import (
 )
 
 func logRequest(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		h.ServeHTTP(w, r)
-		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
-	})
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+			h.ServeHTTP(w, r)
+			log.Printf(
+				"%s %s %v",
+				r.Method,
+				r.URL.Path,
+				time.Since(start),
+			)
+		},
+	)
 }
 
 func StartServer(ctx context.Context) error {
@@ -21,11 +28,15 @@ func StartServer(ctx context.Context) error {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", logRequest(appFiles))
-	mux.Handle("/test_data/", http.StripPrefix("/test_data/", logRequest(dataFiles)))
+	mux.Handle(
+		"/test_data/",
+		http.StripPrefix("/test_data/", logRequest(dataFiles)),
+	)
 
 	srv := &http.Server{
-		Addr:    ":3000",
-		Handler: mux,
+		Addr:              ":3000",
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	go func() {
