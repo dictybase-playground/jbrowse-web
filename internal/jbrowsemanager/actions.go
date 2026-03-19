@@ -1,3 +1,4 @@
+// Package jbrowsemanager provides functionality for managing jbrowse-web installations.
 package jbrowsemanager
 
 import (
