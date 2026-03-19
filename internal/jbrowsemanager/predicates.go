@@ -1,4 +1,4 @@
-package jbrowse_manager
+package jbrowsemanager
 
 import (
 	A "github.com/IBM/fp-go/v2/array"
@@ -10,7 +10,10 @@ import (
 
 var (
 	isBuildAsset = func(asset *gh.ReleaseAsset) bool {
-		return F.Pipe1(asset.GetName(), S.Includes("jbrowse-web"))
+		return F.Pipe1(
+			asset.GetName(),
+			S.Includes("jbrowse-web"),
+		)
 	}
 	hasBuildAsset = func(release *gh.RepositoryRelease) bool {
 		return F.Pipe1(release.Assets, A.Any(isBuildAsset))
@@ -29,4 +32,8 @@ var (
 	)
 )
 
-func getAssetID(asset *gh.ReleaseAsset) int64 { return asset.GetID() }
+func getAssetID(
+	asset *gh.ReleaseAsset,
+) int64 {
+	return asset.GetID()
+}

@@ -1,4 +1,4 @@
-package jbrowse_manager
+package jbrowsemanager
 
 import (
 	"context"
@@ -21,7 +21,11 @@ func TestFetchReleases(t *testing.T) {
 		t.Fatalf("FetchReleases failed: %s", msg)
 	}
 
-	releases := E.GetOrElse(func(_ error) []*gh.RepositoryRelease { return nil })(result)
+	releases := E.GetOrElse(
+		func(_ error) []*gh.RepositoryRelease { return nil },
+	)(
+		result,
+	)
 	if len(releases) == 0 {
 		t.Fatal("expected at least one release")
 	}
@@ -37,7 +41,10 @@ func TestFetchReleases(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	result := F.Pipe2(
-		CreateParams{Cfg: NewConfig(), Ctx: context.Background()},
+		CreateParams{
+			Cfg: NewConfig(),
+			Ctx: context.Background(),
+		},
 		Create,
 		toEither,
 	)
@@ -50,7 +57,11 @@ func TestCreate(t *testing.T) {
 		t.Fatalf("Create failed: %s", msg)
 	}
 
-	dr := E.GetOrElse(func(_ error) DownloadResult { return DownloadResult{} })(result)
+	dr := E.GetOrElse(
+		func(_ error) DownloadResult { return DownloadResult{} },
+	)(
+		result,
+	)
 	if dr.Body == nil {
 		t.Fatal("expected non-nil Body in DownloadResult")
 	}

@@ -2,11 +2,10 @@ package main
 
 import (
 	"context"
+	"dictybase-playground/jbrowse-cli/internal/jbrowsemanager"
+	"dictybase-playground/jbrowse-cli/internal/server"
 	"fmt"
 	"os"
-
-	"dictybase-playground/jbrowse-cli/internal/jbrowse_manager"
-	"dictybase-playground/jbrowse-cli/internal/server"
 
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
@@ -35,13 +34,19 @@ func jbrowseCommands() *cli.Command {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return F.Pipe2(
-				jbrowse_manager.CreateParams{Cfg: jbrowse_manager.NewConfig(), Ctx: ctx},
-				jbrowse_manager.RunCreate,
+				jbrowsemanager.CreateParams{
+					Cfg: jbrowsemanager.NewConfig(),
+					Ctx: ctx,
+				},
+				jbrowsemanager.RunCreate,
 				E.Fold(
 					F.Identity[error],
-					func(dr jbrowse_manager.DownloadResult) error {
+					func(dr jbrowsemanager.DownloadResult) error {
 						defer dr.Body.Close()
-						fmt.Printf("Downloaded jbrowse-web %s\n", dr.Version)
+						fmt.Printf(
+							"Downloaded jbrowse-web %s\n",
+							dr.Version,
+						)
 						return nil
 					},
 				),
@@ -64,7 +69,10 @@ func setupApp() *cli.Command {
 func main() {
 	app := setupApp()
 
-	if err := app.Run(context.Background(), os.Args); err != nil {
+	if err := app.Run(
+		context.Background(),
+		os.Args,
+	); err != nil {
 		os.Exit(1)
 	}
 }

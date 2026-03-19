@@ -1,4 +1,4 @@
-package jbrowse_manager
+package jbrowsemanager
 
 import (
 	"net/http"
@@ -15,8 +15,10 @@ type Config struct {
 
 func NewConfig() Config {
 	return Config{
-		Client: gh.NewClient(&http.Client{Timeout: time.Second * 10}),
-		Owner:  "GMOD",
-		Repo:   "jbrowse-components",
+		Client: gh.NewClient(
+			&http.Client{Timeout: time.Second * 10},
+		),
+		Owner: "GMOD",
+		Repo:  "jbrowse-components",
 	}
 }
