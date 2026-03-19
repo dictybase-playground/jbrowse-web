@@ -11,6 +11,7 @@ import (
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	O "github.com/IBM/fp-go/v2/option"
+	P "github.com/IBM/fp-go/v2/pair"
 	gh "github.com/google/go-github/v84/github"
 )
 
@@ -31,15 +32,15 @@ type CreateParams struct {
 
 func getLatestRelease(
 	params CreateParams,
-) IOE.IOEither[error, *gh.RepositoryRelease] {
+) IOE.IOEither[error, P.Pair[CreateParams, *gh.RepositoryRelease]] {
 	return IOE.TryCatchError(
-		func() (*gh.RepositoryRelease, error) {
+		func() (P.Pair[CreateParams, *gh.RepositoryRelease], error) {
 			release, _, err := params.Cfg.Client.Repositories.GetLatestRelease(
 				params.Ctx,
 				params.Cfg.Owner,
 				params.Cfg.Repo,
 			)
-			return release, err
+			return P.MakePair(params, release), err
 		},
 	)
 }
@@ -65,25 +66,33 @@ func FetchReleases(
 }
 
 func downloadAsset(
-	cfg Config,
-	ctx context.Context,
-	id int64,
-) IOE.IOEither[error, io.ReadCloser] {
-	return IOE.TryCatchError(func() (io.ReadCloser, error) {
-		rc, _, err := cfg.Client.Repositories.DownloadReleaseAsset(
-			ctx,
-			cfg.Owner,
-			cfg.Repo,
-			id,
-			http.DefaultClient,
-		)
-		return rc, err
-	})
+	pair P.Pair[CreateParams, releaseAsset],
+) IOE.IOEither[error, DownloadResult] {
+	cfg, asset := P.First(pair).Cfg, P.Second(pair)
+	return F.Pipe1(
+		IOE.TryCatchError(func() (io.ReadCloser, error) {
+			rc, _, err := cfg.Client.Repositories.DownloadReleaseAsset(
+				P.First(pair).Ctx,
+				cfg.Owner,
+				cfg.Repo,
+				asset.ID,
+				http.DefaultClient,
+			)
+			return rc, err
+		}),
+		IOE.Map[error](func(body io.ReadCloser) DownloadResult {
+			return DownloadResult{
+				Body:    body,
+				Version: asset.Version,
+			}
+		}),
+	)
 }
 
 func extractReleaseAsset(
-	release *gh.RepositoryRelease,
-) E.Either[error, releaseAsset] {
+	pair P.Pair[CreateParams, *gh.RepositoryRelease],
+) E.Either[error, P.Pair[CreateParams, releaseAsset]] {
+	release := P.Second(pair)
 	return F.Pipe5(
 		release.Assets,
 		A.FindFirst(isBuildAsset),
@@ -98,11 +107,11 @@ func extractReleaseAsset(
 			func(id int64) bool { return id != 0 },
 			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) },
 		),
-		E.Map[error](func(id int64) releaseAsset {
-			return releaseAsset{
+		E.Map[error](func(id int64) P.Pair[CreateParams, releaseAsset] {
+			return P.MakePair(P.First(pair), releaseAsset{
 				ID:      id,
 				Version: release.GetTagName(),
-			}
+			})
 		}),
 	)
 }
@@ -114,28 +123,8 @@ func Create(
 		params,
 		getLatestRelease,
 		IOE.ChainEitherK(extractReleaseAsset),
-		IOE.Chain(
-			func(ra releaseAsset) IOE.IOEither[error, DownloadResult] {
-				return F.Pipe1(
-					downloadAsset(params.Cfg, params.Ctx, ra.ID),
-					IOE.Map[error](
-						func(body io.ReadCloser) DownloadResult {
-							return DownloadResult{
-								Body:    body,
-								Version: ra.Version,
-							}
-						},
-					),
-				)
-			},
-		),
+		IOE.Chain(downloadAsset),
 	)
-}
-
-func RunCreate(
-	params CreateParams,
-) E.Either[error, DownloadResult] {
-	return toEither(Create(params))
 }
 
 func toEither[ERR, A any](
