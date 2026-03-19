@@ -30,15 +30,14 @@ type CreateParams struct {
 }
 
 func getLatestRelease(
-	cfg Config,
-	ctx context.Context,
+	params CreateParams,
 ) IOE.IOEither[error, *gh.RepositoryRelease] {
 	return IOE.TryCatchError(
 		func() (*gh.RepositoryRelease, error) {
-			release, _, err := cfg.Client.Repositories.GetLatestRelease(
-				ctx,
-				cfg.Owner,
-				cfg.Repo,
+			release, _, err := params.Cfg.Client.Repositories.GetLatestRelease(
+				params.Ctx,
+				params.Cfg.Owner,
+				params.Cfg.Repo,
 			)
 			return release, err
 		},
@@ -111,8 +110,9 @@ func extractReleaseAsset(
 func Create(
 	params CreateParams,
 ) IOE.IOEither[error, DownloadResult] {
-	return F.Pipe2(
-		getLatestRelease(params.Cfg, params.Ctx),
+	return F.Pipe3(
+		params,
+		getLatestRelease,
 		IOE.ChainEitherK(extractReleaseAsset),
 		IOE.Chain(
 			func(ra releaseAsset) IOE.IOEither[error, DownloadResult] {

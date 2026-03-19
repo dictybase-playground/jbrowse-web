@@ -23,12 +23,13 @@ var (
 )
 
 func CreateAction(ctx context.Context, cmd *cli.Command) error {
-	output := F.Pipe2(
+	output := F.Pipe3(
 		CreateParams{
 			Cfg: NewConfig(),
 			Ctx: ctx,
 		},
-		RunCreate,
+		Create,
+		toEither,
 		E.Fold(createError, createSuccess),
 	)
 	if err := P.Second(output); err != nil {
