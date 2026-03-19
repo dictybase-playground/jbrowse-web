@@ -7,6 +7,7 @@ import (
 
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
 	P "github.com/IBM/fp-go/v2/pair"
 	cli "github.com/urfave/cli/v3"
 )
@@ -23,12 +24,14 @@ var (
 )
 
 func CreateAction(ctx context.Context, cmd *cli.Command) error {
-	output := F.Pipe3(
+	output := F.Pipe5(
 		CreateParams{
 			Cfg: NewConfig(),
 			Ctx: ctx,
 		},
-		Create,
+		getLatestRelease,
+		IOE.ChainEitherK(extractReleaseAsset),
+		IOE.Chain(downloadAsset),
 		toEither,
 		E.Fold(createError, createSuccess),
 	)
