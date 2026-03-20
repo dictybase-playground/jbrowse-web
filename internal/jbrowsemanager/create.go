@@ -20,6 +20,22 @@ var (
 	int64Eq = EQ.FromStrictEquals[int64]()
 
 	notEqualInt64 = F.Flow2(EQ.Equals(int64Eq), Pred.Not)
+
+	noAssetError = F.Flow2(
+		func(tagName string) error {
+			return fmt.Errorf(
+				"no jbrowse-web asset in release %s",
+				tagName,
+			)
+		},
+		F.Constant[error],
+	)
+
+	makeReleaseAsset = F.Curry2(
+		func(version string, id int64) releaseAsset {
+			return releaseAsset{ID: id, Version: version}
+		},
+	)
 )
 
 type DownloadResult struct {
@@ -100,29 +116,21 @@ func extractReleaseAsset(
 	pair P.Pair[CreateParams, *gh.RepositoryRelease],
 ) E.Either[error, P.Pair[CreateParams, releaseAsset]] {
 	release := P.Second(pair)
-	return F.Pipe5(
+	return F.Pipe6(
 		release.Assets,
 		A.FindFirst(isBuildAsset),
-		E.FromOption[*gh.ReleaseAsset](func() error {
-			return fmt.Errorf(
-				"no jbrowse-web asset in release %s",
-				release.GetTagName(),
-			)
-		}),
+		E.FromOption[*gh.ReleaseAsset](
+			noAssetError(release.GetTagName()),
+		),
 		E.Map[error](getAssetID),
 		E.Chain(
 			E.FromPredicate(
 				notEqualInt64(0),
 				invalidAssetIDError,
-			)),
-		E.Map[error](
-			func(id int64) P.Pair[CreateParams, releaseAsset] {
-				return P.MakePair(P.First(pair), releaseAsset{
-					ID:      id,
-					Version: release.GetTagName(),
-				})
-			},
+			),
 		),
+		E.Map[error](makeReleaseAsset(release.GetTagName())),
+		E.Map[error](P.FromHead[releaseAsset](P.First(pair))),
 	)
 }
 
