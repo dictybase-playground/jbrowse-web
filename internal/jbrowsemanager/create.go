@@ -8,11 +8,18 @@ import (
 
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
+	EQ "github.com/IBM/fp-go/v2/eq"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
-	O "github.com/IBM/fp-go/v2/option"
 	P "github.com/IBM/fp-go/v2/pair"
+	Pred "github.com/IBM/fp-go/v2/predicate"
 	gh "github.com/google/go-github/v84/github"
+)
+
+var (
+	int64Eq = EQ.FromStrictEquals[int64]()
+
+	notEqualInt64 = F.Flow2(EQ.Equals(int64Eq), Pred.Not)
 )
 
 type DownloadResult struct {
@@ -96,17 +103,22 @@ func extractReleaseAsset(
 	return F.Pipe5(
 		release.Assets,
 		A.FindFirst(isBuildAsset),
-		O.Map(getAssetID),
-		E.FromOption[int64](func() error {
+		E.FromOption[*gh.ReleaseAsset](func() error {
 			return fmt.Errorf(
 				"no jbrowse-web asset in release %s",
 				release.GetTagName(),
 			)
 		}),
-		E.FilterOrElse(
-			func(id int64) bool { return id != 0 },
-			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) },
-		),
+		E.Map[error](getAssetID),
+		E.Chain(E.FromPredicate(
+			notEqualInt64(0),
+			func(id int64) error {
+				return fmt.Errorf(
+					"build asset has invalid id: %d",
+					id,
+				)
+			},
+		)),
 		E.Map[error](
 			func(id int64) P.Pair[CreateParams, releaseAsset] {
 				return P.MakePair(P.First(pair), releaseAsset{
