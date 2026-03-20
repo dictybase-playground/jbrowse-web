@@ -110,15 +110,11 @@ func extractReleaseAsset(
 			)
 		}),
 		E.Map[error](getAssetID),
-		E.Chain(E.FromPredicate(
-			notEqualInt64(0),
-			func(id int64) error {
-				return fmt.Errorf(
-					"build asset has invalid id: %d",
-					id,
-				)
-			},
-		)),
+		E.Chain(
+			E.FromPredicate(
+				notEqualInt64(0),
+				invalidAssetIDError,
+			)),
 		E.Map[error](
 			func(id int64) P.Pair[CreateParams, releaseAsset] {
 				return P.MakePair(P.First(pair), releaseAsset{
@@ -134,4 +130,8 @@ func toEither[ERR, A any](
 	ioe IOE.IOEither[ERR, A],
 ) E.Either[ERR, A] {
 	return ioe()
+}
+
+func invalidAssetIDError(id int64) error {
+	return fmt.Errorf("invalid asset id: %d", id)
 }
