@@ -2,11 +2,7 @@ package file
 
 import (
 	"archive/zip"
-	"dictybase-playground/jbrowse-web/internal/functional"
-	"errors"
 	"fmt"
-	A "github.com/IBM/fp-go/v2/array"
-	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
 	IOE "github.com/IBM/fp-go/v2/ioeither"
 	IOEF "github.com/IBM/fp-go/v2/ioeither/file"
@@ -98,8 +94,8 @@ func extractZipFile(dest string, zf *zip.File) O.Option[IOEither[error, *os.File
 }
 
 func extractZipArchive(destDir string, file *os.File) {
-	curriedExtractZipFile := F.Curry2(extractZipFile)
-	a := F.Pipe2(
+	// curriedExtractZipFile := F.Curry2(extractZipFile)
+	a := F.Pipe1(
 		file,
 		openZip,
 	)
