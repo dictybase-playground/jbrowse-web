@@ -16,7 +16,7 @@ var createTemp = IOE.TryCatchError(func() (*os.File, error) {
 
 // createTempWriter accepts a Kleisli and ccomposes it with the createTemp Kleisli. Basically, if you have a function that takes a WriteCloser and returns an IOEither of a file,
 // you can use createTempWriter to create a temporary file and use that as the argument to your function.
-var createTempWriter = F.Pipe1(createTemp, FILE.Write[*os.File])
+var createTempWriter = FILE.Write[*os.File](createTemp)
 
 // copyToFile is a curried function that copies data from a reader to a file
 var copyToFile = F.Curry2(
@@ -27,7 +27,6 @@ var copyToFile = F.Curry2(
 		})
 	},
 )
-
 var IOEcopyToFile = IOE.Eitherize2(
 	func(rc io.ReadCloser, file *os.File) (*os.File, error) {
 		_, err := io.Copy(file, rc)

@@ -2,20 +2,24 @@ package jbrowse_manager
 
 import (
 	"context"
+	"dictybase-playground/jbrowse-web/internal/file"
 	"fmt"
 	A "github.com/IBM/fp-go/v2/array"
 	E "github.com/IBM/fp-go/v2/either"
 	F "github.com/IBM/fp-go/v2/function"
+	IOE "github.com/IBM/fp-go/v2/ioeither"
+	FILE "github.com/IBM/fp-go/v2/ioeither/file"
 	O "github.com/IBM/fp-go/v2/option"
 	S "github.com/IBM/fp-go/v2/string"
 	gh "github.com/google/go-github/v84/github"
 	"io"
 	"net/http"
+	"os"
 	"time"
 )
 
 var (
-	downloadAsset = F.Bind12of3(E.Eitherize3(uncurriedDownloadAsset))
+	downloadAsset = F.Bind12of3(IOE.Eitherize3(uncurriedDownloadAsset))
 )
 
 type githubManager struct {
@@ -66,6 +70,8 @@ func uncurriedDownloadAsset(ghm *githubManager, ctx context.Context, id int64) (
 	return rc, err
 }
 
+func copyToFile()
+
 // Get the latest release with that has build assets labeled `jbrowse-web`
 func Create(ctx context.Context) error {
 	ghm := &githubManager{
@@ -80,15 +86,16 @@ func Create(ctx context.Context) error {
 		return fmt.Errorf("could not get latest repository release: %s", err)
 	}
 
-	F.Pipe5(
+	F.Pipe6(
 		latest.Assets,
 		A.FindFirst(isBuildAsset),
 		O.Map(getAssetID),
-		E.FromOption[int64](func() error { return fmt.Errorf("could not find build asset in latest release") }),
-		E.FilterOrElse(
+		IOE.FromOption[int64](func() error { return fmt.Errorf("could not find build asset in latest release") }),
+		IOE.FilterOrElse(
 			func(id int64) bool { return id != 0 },
 			func(id int64) error { return fmt.Errorf("build asset has invalid id: %d", id) }),
-		E.Map[error](downloadAsset(ghm, ctx)),
+		IOE.Chain[error](downloadAsset(ghm, ctx)),
+		IOE.Chain[error](file.SaveTemp),
 	)
 
 	return nil
