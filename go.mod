@@ -1,4 +1,4 @@
-module dictybase-playground/jbrowse-cli
+module dictybase-playground/jbrowse-web
 
 go 1.25.7
 

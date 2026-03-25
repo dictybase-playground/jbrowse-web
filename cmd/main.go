@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"dictybase-playground/jbrowse-cli/internal/server"
+	"dictybase-playground/jbrowse-web/internal/server"
 	cli "github.com/urfave/cli/v3"
 	"os"
 )
