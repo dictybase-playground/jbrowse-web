@@ -8,7 +8,9 @@ export function startServer(root: string, assets: string) {
     routes: {
       [assetsRoute]: (req: Request) => {
         const { pathname } = new URL(req.url)
-        return new Response(Bun.file(`${assets}${pathname.slice(assetsName.length + 1)}`))
+        return new Response(
+          Bun.file(`${assets}${pathname.slice(assetsName.length + 1)}`),
+        )
       },
     },
     fetch(req) {
@@ -17,8 +19,13 @@ export function startServer(root: string, assets: string) {
       return new Response(Bun.file(`${root}/${filePath}`))
     },
     error(err: NodeJS.ErrnoException) {
-      if (err.code === "ENOENT") return new Response("Not Found", { status: 404 })
-      return new Response(err.message, { status: 500 })
+      if (err.code === "ENOENT")
+        return new Response("Not Found", {
+          status: 404,
+        })
+      return new Response(err.message, {
+        status: 500,
+      })
     },
   })
 
