@@ -2,11 +2,11 @@ import { basename } from "path"
 
 export function startServer(root: string, assets: string) {
   const assetsName = basename(assets)
-  const assetsRoute = `/${assetsName}/*`
+  const assetsRoute = `/${assetsName}/*` as const
 
   const server = Bun.serve({
     routes: {
-      [assetsRoute]: (req) => {
+      [assetsRoute]: (req: Request) => {
         const { pathname } = new URL(req.url)
         return new Response(Bun.file(`${assets}${pathname.slice(assetsName.length + 1)}`))
       },
