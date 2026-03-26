@@ -1,19 +1,24 @@
 import { Command } from "commander"
-import { existsSync } from "fs"
+import { existsSync, PathLike } from "fs"
 import { pipe } from "fp-ts/function"
-import { fold as Efold, fromPredicate as EfromPredicate, Applicative as EApplicative } from "fp-ts/Either"
-import { map as RNEAmap, traverse } from "fp-ts/ReadonlyNonEmptyArray"
+import { map as Emap, fold as Efold, fromPredicate as EfromPredicate, Applicative as EApplicative } from "fp-ts/Either"
+import { traverse } from "fp-ts/ReadonlyNonEmptyArray"
+import { traverse as Atraverse } from "fp-ts/Array"
+import { fromEntries, toEntries, traverseWithIndex as RtraverseWithIndex } from "fp-ts/Record"
 import { startServer } from "../server/index"
 
 const program = new Command()
 
-const eitherDirExists = (dirTuple: [string, string]) => { 
+const eitherDirExists = (directories: Record<string, string>) => { 
   return pipe(
-    dirTuple,
-    EfromPredicate(
-      ([, dir]) => existsSync(dir),
+    directories,
+    toEntries<string, string>,
+    Atraverse(EApplicative)
+    (EfromPredicate(
+      ([,dir]) => existsSync(dir),
       ([name, dir]) => new Error(`Error: ${name} directory does not exist: ${dir}`)
-    )
+    )),
+    Emap(fromEntries)
   )
 }
 
@@ -24,14 +29,14 @@ program
   .argument("<assets>", "folder containing local assets to serve")
   .action((root: string, assets: string) => {
     pipe(
-      [["root", root], ["asset", assets]],
-      traverse(EApplicative)(eitherDirExists),
+      { root, assets },
+      eitherDirExists,
       Efold(
         ({ message }) => {
-          console.log(message)
+          console.error(message)
           process.exit(1)
         },
-        () => {
+        ({ root, assets }) => {
           startServer(root, assets)
         }
       )
