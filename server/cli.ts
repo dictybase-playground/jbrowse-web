@@ -1,10 +1,9 @@
 import { Command } from "commander"
-import { existsSync, PathLike } from "fs"
+import { existsSync } from "fs"
 import { pipe } from "fp-ts/function"
 import { map as Emap, fold as Efold, fromPredicate as EfromPredicate, Applicative as EApplicative } from "fp-ts/Either"
-import { traverse } from "fp-ts/ReadonlyNonEmptyArray"
 import { traverse as Atraverse } from "fp-ts/Array"
-import { fromEntries, toEntries, traverseWithIndex as RtraverseWithIndex } from "fp-ts/Record"
+import { fromEntries, toEntries } from "fp-ts/Record"
 import { startServer } from "../server/index"
 
 const program = new Command()
