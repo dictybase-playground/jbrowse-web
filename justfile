@@ -1,29 +1,37 @@
 outdir := "jbrowse2"
 asset_url := "http://localhost:3000"
 asset_dir := "data"
-local_test_data_dir := "test_data"
 
+# Start local development: load local config and run the dev server
 dev: load-config-local serve
 
+# Copy local config into the jbrowse2 output directory
 load-config-local:
   cp ./config.local.json {{outdir}}/config.json
 
-serve: 
+# Run the Go dev server
+serve:
   go run ./cmd/main.go dev
 
+# Index a local FASTA file and add its assembly to config.local.json
+# Usage: just add-assembly <fasta_file>
 add-assembly fasta_file:
-  samtools faidx {{local_test_data_dir}}/{{fasta_file}}
+  samtools faidx {{fasta_file}}
   bun run aa \
     --force \
     --out config.local.json \
-    {{asset_url}}/{{local_test_data_dir}}/{{fasta_file}} 
+    {{asset_url}}/{{fasta_file}}
 
+# Add a remote assembly by URL to the JBrowse config
+# Usage: just add-assembly-remote <fasta_url>
 add-assembly-remote fasta_file:
   bun run aa {{fasta_file}}
 
-load-config: 
+# Copy the production config into the jbrowse2 output directory
+load-config:
   cp ./config.json {{outdir}}/config.json
 
+# Scaffold a fresh JBrowse2 instance, remove test data, and apply the production config
 create:
   bun run create {{outdir}} --force
   rm -rf {{outdir}}/test_data
