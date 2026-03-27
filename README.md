@@ -37,6 +37,8 @@ bun install
 
 This directory will be served by the static server and should contain your data files (FASTA, GFF3, etc.). You can name it `test_data/` or something else.
 
+*note*: If you name it something other than `test_data/`, you will need to adjust the `serve` command in the package.json accordingly.
+
 Example:
 ```sh
 mkdir test_data
