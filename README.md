@@ -27,7 +27,13 @@ The static server (`server/index.ts`) serves both the JBrowse app (`jbrowse2/`) 
 
 ### Quick Start
 
-**1. Create local Jbrowse data directory**
+**1. Install Bun dependencies**
+
+```sh
+bun install
+```
+
+**2. Create local Jbrowse data directory**
 
 This directory will be served by the static server and should contain your data files (FASTA, GFF3, etc.). You can name it `test_data/` or something else.
 
@@ -36,7 +42,7 @@ Example:
 mkdir test_data
 ```
 
-**2. Add a FASTA assembly**
+**3. Add a FASTA assembly**
 
 Place your FASTA file in data directory you just created, then run:
 
@@ -47,14 +53,14 @@ just add-assembly test_data/fasta.fa
 
 This indexes the file with `samtools faidx` (producing a `.fa.fai` file) and registers the assembly in `config.local.json`, pointing to `http://localhost:3000/<data_directory>/<fasta_file>`.
 
-**3. Load the config file into the Jbrowse application directory**
+**4. Load the config file into the Jbrowse application directory**
 
 ```sh
 just load-config-local
 ```
 This copies the  `config.local.json` file into `jbrowse2/config.json`, which is the config file loaded by the JBrowse app.
 
-**4. Start the dev server**
+**5. Start the dev server**
 
 ```sh
 just serve
