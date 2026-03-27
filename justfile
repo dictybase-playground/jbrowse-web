@@ -11,7 +11,7 @@ load-config-local:
 
 # Run the Go dev server
 serve:
-  go run ./cmd/main.go dev
+  bun serve
 
 # Index a local FASTA file and add its assembly to config.local.json
 # Usage: just add-assembly <fasta_file>
