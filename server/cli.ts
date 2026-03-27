@@ -9,7 +9,7 @@ import {
 } from "fp-ts/Either"
 import { traverse as Atraverse } from "fp-ts/Array"
 import { fromEntries, toEntries } from "fp-ts/Record"
-import { startServer } from "../server/index"
+import { startServer } from "./main"
 
 const program = new Command()
 
