@@ -42,13 +42,15 @@ Example:
 mkdir test_data
 ```
 
-**3. Add a FASTA assembly**
+**3. Place a FASTA file into data directory**
 
 Place your FASTA file in data directory you just created, then run:
 
+**3. Add a FASTA assembly to local config**
+
 Example:
 ```sh
-just add-assembly test_data/fasta.fa
+just add-assembly test_data/canonical_core.fa
 ```
 
 This indexes the file with `samtools faidx` (producing a `.fa.fai` file) and registers the assembly in `config.local.json`, pointing to `http://localhost:3000/<data_directory>/<fasta_file>`.
