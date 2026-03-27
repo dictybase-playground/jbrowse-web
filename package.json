@@ -8,7 +8,8 @@
     "format": "oxfmt server/",
     "check": "bun run --parallel lint format",
     "create": "bun run jbrowse create",
-    "aa": "bun run jbrowse add-assembly"
+    "aa": "bun run jbrowse add-assembly",
+    "serve": "bun server/cli.ts jbrowse2 test_data"
   },
   "devDependencies": {
     "@jbrowse/cli": "^4.1.13"
