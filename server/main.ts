@@ -33,13 +33,12 @@ export function startServer(root: string, assetsPath: string) {
       [assetsRoute]: ({ url }: Request) => {
         // Get pathname of request, e.g: `/test_data/fasta/dicty.fa`
         const { pathname: requestPath } = new URL(url)
+
         // requestPath:        `/test_data/fasta/dicty.fa`
         // assetsPath:      `assets/test_data`
-        // assetsBaseDir:   `test_data`
 
-        // file:            `assets/test_data/fasta/dicty.fa`
         // assetsPath + requestPath = `assets/test_data/test_data/fasta/dicty.fa`
-        // assetsPath + (requestPath - /assetsBaseDir) = `assets/test_data/fasta/dicty.fa`
+        // (remove duplicated `test_data`) => `assets/test_data/fasta/dicty.fa`
         const assetFile = pipe(
           SMonoid.concat(assetsPath, requestPath),
           Ssplit("/"),
