@@ -7,7 +7,6 @@ This project contains static server that serves a build of the `jbrowse` app
 - [bun](https://bun.sh/)
 - [just 1.4+](https://github.com/casey/just)
 - [samtools](https://www.htslib.org/)
-- [Go](https://go.dev/) (for the dev server)
 
 ## Project Structure
 
