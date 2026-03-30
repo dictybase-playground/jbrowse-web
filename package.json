@@ -6,18 +6,18 @@
   "scripts": {
     "lint": "oxlint server/",
     "format": "oxfmt server/",
-    "check": "bun run --parallel lint format",
+    "check": "bun run --sequential lint format",
     "create": "bun run jbrowse create",
     "aa": "bun run jbrowse add-assembly",
     "serve": "bun server/cli.ts jbrowse2 test_data"
   },
   "devDependencies": {
-    "@jbrowse/cli": "^4.1.13"
+    "@jbrowse/cli": "^4.1.13",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0"
   },
   "dependencies": {
     "commander": "^14.0.3",
-    "fp-ts": "^2.16.11",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0"
+    "fp-ts": "^2.16.11"
   }
 }
