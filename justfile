@@ -9,7 +9,7 @@ dev: load-config-local serve
 load-config-local:
   cp ./config.local.json {{outdir}}/config.json
 
-# Run the Go dev server
+# Run the dev server
 serve:
   bun serve
 
