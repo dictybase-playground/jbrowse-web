@@ -1,15 +1,21 @@
 import { Hono } from "hono"
 import { logger } from "hono/logger"
 import { serveStatic } from "hono/bun"
-import { basename, dirname } from "path"
+import { basename } from "path"
 
 export function startServer(root: string, assetsPath: string) {
   const app = new Hono()
-  app.use("*", logger())
-  const assetsBaseDir = basename(assetsPath)
 
+  app.use("*", logger())
   // Serve assets under /{assetsBaseDir}/*
-  app.use(`/${assetsBaseDir}/*`, serveStatic({ root: dirname(assetsPath) }))
+  const assetsBaseDir = basename(assetsPath)
+  app.use(
+    `/${assetsBaseDir}/*`,
+    serveStatic({
+      root: assetsPath,
+      rewriteRequestPath: (path) => path.replace(`/${assetsBaseDir}`, ""),
+    }),
+  )
 
   // Serve JBrowse app for everything else
   app.use("*", serveStatic({ root }))
