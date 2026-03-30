@@ -18,7 +18,7 @@ import {
 } from "fp-ts/string"
 
 /**
- * Starts a static server for serving the Jnrowse application.
+ * Starts a static server for serving the Jbrowse application.
  * `root` is the directory that contains the `index.html`.
  * `assetsPath` contains the jbrowse data assets such as FASTA files, GFF3 files, BAM files, et cetera.
  */
