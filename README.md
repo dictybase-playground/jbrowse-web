@@ -7,6 +7,8 @@ This project contains static server that serves a build of the `jbrowse` app
 - [bun](https://bun.sh/)
 - [just 1.4+](https://github.com/casey/just)
 - [samtools](https://www.htslib.org/)
+- [tabix](https://www.htslib.org/doc/tabix.html)
+- [bgzip](https://www.htslib.org/doc/bgzip.html)
 
 ## Project Structure
 
