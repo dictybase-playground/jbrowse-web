@@ -23,8 +23,8 @@ add-assembly fasta_file:
 
 # Add a remote assembly by URL to the JBrowse config
 # Usage: just add-assembly-remote <fasta_url>
-add-assembly-remote fasta_file:
-  bun run aa {{fasta_file}}
+add-assembly-remote fasta_url:
+  bun run aa {{fasta_url}}
 
 add-track gff3_file:
   #!/bin/bash
