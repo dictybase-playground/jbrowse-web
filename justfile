@@ -1,6 +1,5 @@
 outdir := "jbrowse2"
 asset_url := "http://localhost:3000"
-asset_dir := "data"
 
 # Start local development: load local config and run the dev server
 dev: load-config-local serve
@@ -26,6 +25,22 @@ add-assembly fasta_file:
 # Usage: just add-assembly-remote <fasta_url>
 add-assembly-remote fasta_file:
   bun run aa {{fasta_file}}
+
+add-track gff3_file:
+  #!/bin/bash
+  sorted=$(just sort-gff {{gff3_file}})
+  tabix $sorted
+  bun run at \
+    --force \
+    --out config.local.json \
+    {{asset_url}}/$sorted
+
+sort-gff gff3_file:
+  #!/bin/bash
+  bun sort-gff \
+    {{gff3_file}} \
+    | bgzip > {{gff3_file}}.sorted.gff.gz
+  echo {{gff3_file}}.sorted.gff.gz
 
 # Copy the production config into the jbrowse2 output directory
 load-config:
