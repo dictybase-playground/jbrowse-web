@@ -11,7 +11,7 @@
     "aa": "bun run jbrowse add-assembly",
     "at": "bun run jbrowse add-track",
     "sort-gff": "bun run jbrowse sort-gff",
-    "serve": "bun run --hot server/cli.ts jbrowse2 test_data"
+    "serve": "bun run server/cli.ts jbrowse2 test_data"
   },
   "devDependencies": {
     "@jbrowse/cli": "^4.1.13",
