@@ -1,5 +1,5 @@
 import { Command } from "commander"
-import { existsSync } from "fs"
+import { existsSync, statSync } from "fs"
 import { pipe } from "fp-ts/function"
 import {
   map as Emap,
@@ -7,11 +7,16 @@ import {
   fromPredicate as EfromPredicate,
   Applicative as EApplicative,
 } from "fp-ts/Either"
+import { and } from "fp-ts/Predicate"
 import { traverse as Atraverse } from "fp-ts/Array"
 import { fromEntries, toEntries } from "fp-ts/Record"
 import { startServer } from "./main"
 
 const program = new Command()
+
+const isDir = (directory: string) => statSync(directory).isDirectory()
+
+const directoryCheck = pipe(existsSync, and(isDir))
 
 const eitherDirExists = (directories: Record<string, string>) => {
   return pipe(
@@ -19,7 +24,7 @@ const eitherDirExists = (directories: Record<string, string>) => {
     toEntries<string, string>,
     Atraverse(EApplicative)(
       EfromPredicate(
-        ([, dir]) => existsSync(dir),
+        ([, dir]) => directoryCheck(dir),
         ([name, dir]) =>
           new Error(`Error: ${name} directory does not exist: ${dir}`),
       ),
