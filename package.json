@@ -9,7 +9,9 @@
     "check": "bun run --sequential lint format",
     "create": "bun run jbrowse create",
     "aa": "bun run jbrowse add-assembly",
-    "serve": "bun server/cli.ts jbrowse2 test_data"
+    "at": "bun run jbrowse add-track",
+    "sort-gff": "bun run jbrowse sort-gff",
+    "serve": "bun run --hot server/cli.ts jbrowse2 test_data"
   },
   "devDependencies": {
     "@jbrowse/cli": "^4.1.13",
