@@ -97,17 +97,24 @@ bun run jbrowse add-track http://localhost:3000/test_data/annotations.gff3.gz \
 
 ### Static Server
 
-The dev server is a minimal Bun HTTP server in `server/main.ts`. It serves files from a given directory with automatic MIME type detection.
+The dev server is a minimal Bun HTTP server in `server/main.ts`. It serves two directories — the JBrowse app root and a local assets folder — from a single origin with automatic MIME type detection.
 
 ```sh
 # Run directly
-bun server/index.ts <directory>
+bun serve <root> <assets> [-p <port>]
 
-# With a custom port
-PORT=8080 bun server/index.ts <directory>
+# Example: serve jbrowse2/ and test_data/ on port 8080
+bun serve jbrowse2 test_data -p 8080
 ```
 
-The `just dev` recipe starts it pointed at the project root so both `jbrowse2/` and `test_data/` are accessible under the same origin.
+Via `just`:
+
+```sh
+just serve             # defaults: jbrowse2/, test_data/, port 3000
+just serve port=8080   # custom port
+```
+
+`just dev` runs `load-config-local` then `serve`, so both `jbrowse2/` and `test_data/` are accessible under the same origin (`http://localhost:3000`).
 
 ### Configuration
 
