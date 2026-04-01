@@ -57,7 +57,7 @@ program
           process.exit(1)
         },
         ({ root, assets }) => {
-          startServer(root, assets, { port: parseInt(port, 10) })
+          startServer(root, assets, { port })
         },
       ),
     )

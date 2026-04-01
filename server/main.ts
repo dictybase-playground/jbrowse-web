@@ -4,7 +4,7 @@ import { serveStatic } from "hono/bun"
 import { basename } from "path"
 
 type ServerOptions = {
-  port: number
+  port: string
 }
 
 export function startServer(
