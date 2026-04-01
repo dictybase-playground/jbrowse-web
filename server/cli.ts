@@ -36,7 +36,8 @@ program
     "directory where the JBrowse2 application entrypoint is located",
   )
   .argument("<assets>", "folder containing local assets to serve")
-  .action((root: string, assets: string) => {
+  .option("-p --port [port]", "port to use for the server", "3000")
+  .action((root: string, assets: string, { port }: { port: number }) => {
     pipe(
       { root, assets },
       eitherDirExists,
@@ -46,7 +47,7 @@ program
           process.exit(1)
         },
         ({ root, assets }) => {
-          startServer(root, assets)
+          startServer(root, assets, { port })
         },
       ),
     )
