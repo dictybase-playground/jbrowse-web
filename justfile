@@ -39,8 +39,8 @@ sort-gff gff3_file:
   #!/bin/bash
   bun sort-gff \
     {{gff3_file}} \
-    | bgzip > {{gff3_file}}.sorted.gff.gz
-  echo {{gff3_file}}.sorted.gff.gz
+    | bgzip > {{gff3_file}}.sorted.gff3.gz
+  echo {{gff3_file}}.sorted.gff3.gz
 
 # Copy the production config into the jbrowse2 output directory
 load-config:
