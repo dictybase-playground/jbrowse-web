@@ -1,13 +1,13 @@
 import { Command } from "commander"
 import { existsSync, statSync } from "fs"
-import { pipe } from "fp-ts/function"
+import { pipe, flow } from "fp-ts/function"
 import {
   map as Emap,
   fold as Efold,
   fromPredicate as EfromPredicate,
   Applicative as EApplicative,
+  filterOrElse as EfilterOrElse,
 } from "fp-ts/Either"
-import { and } from "fp-ts/Predicate"
 import { traverse as Atraverse } from "fp-ts/Array"
 import { fromEntries, toEntries } from "fp-ts/Record"
 import { startServer } from "./main"
@@ -16,11 +16,12 @@ const program = new Command()
 
 const isDir = (directory: string) => statSync(directory).isDirectory()
 
-const directoryCheck = pipe(existsSync, and(isDir))
+const dirDoesNotExistError = ([name, dir]: [string, string]) => {
+  return new Error(`$ Argument passed to ${name} path does not exist: ${dir}`)
+}
 
-const dirError = ([name, dir]: [string, string]) => {
-  if (!existsSync(dir)) return new Error(`${name} directory not found: ${dir}`)
-  return new Error(`${name} path is not a directory: ${dir}`)
+const isNotDirectoryError = ([name, dir]: [string, string]) => {
+  return new Error(`$ Argument passed to ${name} path is not a directory: ${dir}`)
 }
 
 const eitherDirExists = (directories: Record<string, string>) => {
@@ -28,7 +29,10 @@ const eitherDirExists = (directories: Record<string, string>) => {
     directories,
     toEntries<string, string>,
     Atraverse(EApplicative)(
-      EfromPredicate(([, dir]) => directoryCheck(dir), dirError),
+      flow(
+        EfromPredicate(([, dir]) => existsSync(dir), dirDoesNotExistError),
+        EfilterOrElse(([, dir]) => isDir(dir), isNotDirectoryError)
+      )
     ),
     Emap(fromEntries),
   )
