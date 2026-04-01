@@ -50,7 +50,7 @@ mkdir test_data
 
 Place your FASTA file in data directory you just created, then run:
 
-**3. Add a FASTA assembly to local config**
+**4. Add a FASTA assembly to local config**
 
 Example:
 ```sh
@@ -59,14 +59,14 @@ just add-assembly test_data/canonical_core.fa
 
 This indexes the file with `samtools faidx` (producing a `.fa.fai` file) and registers the assembly in `config.local.json`, pointing to `http://localhost:3000/<data_directory>/<fasta_file>`.
 
-**4. Load the config file into the Jbrowse application directory**
+**5. Load the config file into the Jbrowse application directory**
 
 ```sh
 just load-config-local
 ```
 This copies the  `config.local.json` file into `jbrowse2/config.json`, which is the config file loaded by the JBrowse app.
 
-**5. Start the dev server**
+**6. Start the dev server**
 
 ```sh
 just serve
