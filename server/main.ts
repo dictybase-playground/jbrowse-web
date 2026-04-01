@@ -7,7 +7,11 @@ type ServerOptions = {
   port: number
 }
 
-export function startServer(root: string, assetsPath: string, options: ServerOptions) {
+export function startServer(
+  root: string,
+  assetsPath: string,
+  options: ServerOptions,
+) {
   const app = new Hono()
 
   app.use("*", logger())
