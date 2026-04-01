@@ -21,7 +21,10 @@ export function startServer(
     `/${assetsBaseDir}/*`,
     serveStatic({
       root: assetsPath,
-      rewriteRequestPath: (path) => path.replace(`/${assetsBaseDir}`, ""),
+      rewriteRequestPath: (path) =>
+        path.startsWith(`/${assetsBaseDir}`)
+          ? path.slice(`/${assetsBaseDir}`.length)
+          : path,
     }),
   )
 
@@ -31,5 +34,5 @@ export function startServer(
   const server = Bun.serve({ port: options.port, fetch: app.fetch })
   console.log(`App:    ${root}`)
   console.log(`Assets: ${assetsPath}`)
-  console.log(`Listening on http://${server.hostname}:${server.port}`)
+  console.log(`Listening on http://localhost:${server.port}`)
 }
