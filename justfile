@@ -19,9 +19,10 @@ serve port=default_port:
 add-assembly fasta_file:
   samtools faidx {{fasta_file}}
   bun run aa \
+    --load inPlace \
     --force \
     --out config.local.json \
-    {{asset_url}}/{{fasta_file}}
+    {{fasta_file}}
 
 # Add a remote assembly by URL to the JBrowse config
 # Usage: just add-assembly-remote <fasta_url>
@@ -35,9 +36,10 @@ add-track gff3_file:
   sorted=$(just sort-gff {{gff3_file}})
   tabix $sorted
   bun run at \
+    --load inPlace \
     --force \
     --out config.local.json \
-    {{asset_url}}/$sorted
+    $sorted
 
 # Sort a GFF3 file by chromosome and position, then compress with bgzip
 # Outputs the path to the resulting .sorted.gff3.gz file
