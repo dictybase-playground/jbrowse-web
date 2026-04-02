@@ -82,18 +82,15 @@ This starts the static server. Open `http://localhost:3000` in your browser.
 just add-assembly-local <filename.fa>
 ```
 
-The file must be in `test_data/`. The command indexes it and adds the assembly to `config.local.json`.
+The command indexes it and adds the assembly to `config.local.json`.
 
 #### GFF3
 
-Index the file manually, then add the track to `config.local.json` by hand or via the JBrowse CLI:
-
 ```sh
-bgzip test_data/annotations.gff3
-tabix test_data/annotations.gff3.gz
-bun run jbrowse add-track http://localhost:3000/test_data/annotations.gff3.gz \
-  --out config.local.json
+just add-track-local <filename.gff3>
 ```
+
+The command sorts the GFF3, compresses it with `bgzip`, indexes it with `tabix`, and registers the track in `config.local.json`.
 
 ### Static Server
 
