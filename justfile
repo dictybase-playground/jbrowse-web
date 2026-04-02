@@ -1,7 +1,6 @@
 jbrowse_dir := "jbrowse2"
 assets_dir := "test_data"
 default_port := "3000"
-asset_url := "http://localhost:" + default_port
 
 # Start local development: load local config and run the dev server
 dev: load-config-local serve
