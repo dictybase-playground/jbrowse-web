@@ -15,7 +15,7 @@ serve port=default_port:
 
 # Index a local FASTA file and add its assembly to config.local.json
 # Usage: just add-assembly <fasta_file>
-add-assembly fasta_file:
+add-assembly-local fasta_file:
   samtools faidx {{fasta_file}}
   bun run aa \
     --load inPlace \
@@ -30,7 +30,7 @@ add-assembly-remote fasta_url:
 
 # Sort a GFF3 file, compress with bgzip, index with tabix, and add it as a track in config.local.json
 # Usage: just add-track <gff3_file>
-add-track gff3_file:
+add-track-local gff3_file:
   #!/bin/bash
   sorted=$(just sort-gff {{gff3_file}})
   tabix $sorted
