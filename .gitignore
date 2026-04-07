@@ -34,3 +34,4 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 /.tool-versions
 /config.local.json
+/jbrowse2/config.json
