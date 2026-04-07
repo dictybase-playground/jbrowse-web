@@ -2,42 +2,37 @@ jbrowse_dir := "jbrowse2"
 assets_dir := "test_data"
 default_port := "3000"
 
-# Start local development: load local config and run the dev server
-dev: load-config-local serve
+# Start local development: load config and run the dev server
+dev: load-config serve
 
 # Copy local config into the jbrowse2 output directory
-load-config-local:
-  cp ./config.local.json {{jbrowse_dir}}/config.json
+load-config:
+  cp ./config.json {{jbrowse_dir}}/config.json
 
 # Run the dev server
 serve port=default_port:
   bun serve {{jbrowse_dir}} {{assets_dir}} -p {{port}}
 
-# Index a local FASTA file and add its assembly to config.local.json
+# Index a local FASTA file and add its assembly to config.json
 # Usage: just add-assembly <fasta_file>
-add-assembly-local fasta_file:
+add-assembly fasta_file:
   samtools faidx {{fasta_file}}
   bun run aa \
     --load inPlace \
     --force \
-    --out config.local.json \
+    --out config.json \
     {{fasta_file}}
 
-# Add a remote assembly by URL to the JBrowse config
-# Usage: just add-assembly-remote <fasta_url>
-add-assembly-remote fasta_url:
-  bun run aa {{fasta_url}}
-
-# Sort a GFF3 file, compress with bgzip, index with tabix, and add it as a track in config.local.json
+# Sort a GFF3 file, compress with bgzip, index with tabix, and add it as a track in config.json
 # Usage: just add-track <gff3_file>
-add-track-local gff3_file:
+add-track gff3_file:
   #!/bin/bash
   sorted=$(just sort-gff {{gff3_file}})
   tabix $sorted
   bun run at \
     --load inPlace \
     --force \
-    --out config.local.json \
+    --out config.json \
     $sorted
 
 # Sort a GFF3 file by chromosome and position, then compress with bgzip
