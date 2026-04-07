@@ -8,11 +8,11 @@
         "adapter": {
           "type": "IndexedFastaAdapter",
           "fastaLocation": {
-            "uri": "http://localhost:3000/test_data/canonical_core.fa",
+            "uri": "test_data/canonical_core.fa",
             "locationType": "UriLocation"
           },
           "faiLocation": {
-            "uri": "http://localhost:3000/test_data/canonical_core.fa.fai",
+            "uri": "test_data/canonical_core.fa.fai",
             "locationType": "UriLocation"
           }
         }
@@ -24,5 +24,28 @@
   "defaultSession": {
     "name": "New Session"
   },
-  "tracks": []
+  "tracks": [
+    {
+      "type": "FeatureTrack",
+      "trackId": "DDB0166986.gff.sorted.gff3",
+      "name": "DDB0166986.gff.sorted.gff3",
+      "adapter": {
+        "type": "Gff3TabixAdapter",
+        "gffGzLocation": {
+          "uri": "test_data/DDB0166986.gff.sorted.gff3.gz",
+          "locationType": "UriLocation"
+        },
+        "index": {
+          "location": {
+            "uri": "test_data/DDB0166986.gff.sorted.gff3.gz.tbi",
+            "locationType": "UriLocation"
+          },
+          "indexType": "TBI"
+        }
+      },
+      "assemblyNames": [
+        "canonical_core"
+      ]
+    }
+  ]
 }
