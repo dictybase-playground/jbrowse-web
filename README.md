@@ -59,17 +59,23 @@ Loads `config.json` into `jbrowse2/config.json` and starts the server. Open `htt
 
 ## Adding Data Files
 
+Place new files in `test_data/`, then use the commands below to index them and register them in `config.json`. Run `just dev` afterward to reload the config.
+
 #### FASTA
 
 ```sh
 just add-assembly <filename.fa>
 ```
 
+Runs `samtools faidx` to produce a `.fai` index, then adds the assembly to `config.json`. JBrowse uses the FASTA as the reference sequence (genome) that tracks are displayed against.
+
 #### GFF3
 
 ```sh
 just add-track <filename.gff3>
 ```
+
+Sorts the GFF3 by chromosome and position, compresses it with `bgzip` (producing `<filename>.sorted.gff3.gz`), indexes it with `tabix`, and adds the track to `config.json`.
 
 ## Configuration
 
@@ -90,7 +96,7 @@ bun serve <root> <assets> [-p <port>]
 
 # Via just
 just serve             # defaults: jbrowse2/, test_data/, port 3000
-just serve port=8080   # custom port
+just serve 8080   # custom port
 ```
 
 ## Recreating the JBrowse Build
