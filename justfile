@@ -2,15 +2,12 @@ jbrowse_dir := "jbrowse2"
 assets_dir := "test_data"
 default_port := "3000"
 
-# Start local development: load config and run the dev server
-dev: load-config serve
-
 # Copy shared config into the jbrowse2 output directory
 load-config:
   cp ./config.json {{jbrowse_dir}}/config.json
 
-# Run the dev server
-serve port=default_port:
+# Load config and run the dev server
+serve port=default_port: load-config
   bun serve {{jbrowse_dir}} {{assets_dir}} -p {{port}}
 
 # Index a local FASTA file and add its assembly to config.json
