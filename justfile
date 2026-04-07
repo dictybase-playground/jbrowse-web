@@ -13,24 +13,24 @@ serve port=default_port: load-config
 # Index a local FASTA file and add its assembly to config.json
 # Usage: just add-assembly <fasta_file>
 add-assembly fasta_file:
-  samtools faidx {{fasta_file}}
+  samtools faidx "{{fasta_file}}"
   bun run aa \
     --load inPlace \
     --force \
     --out config.json \
-    {{fasta_file}}
+    "{{fasta_file}}"
 
 # Sort a GFF3 file, compress with bgzip, index with tabix, and add it as a track in config.json
 # Usage: just add-track <gff3_file>
 add-track gff3_file:
   #!/bin/bash
   sorted=$(just sort-gff {{gff3_file}})
-  tabix $sorted
+  tabix -f -p gff "$sorted"
   bun run at \
     --load inPlace \
     --force \
     --out config.json \
-    $sorted
+    "$sorted"
 
 # Sort a GFF3 file by chromosome and position, then compress with bgzip
 # Outputs the path to the resulting .sorted.gff3.gz file
