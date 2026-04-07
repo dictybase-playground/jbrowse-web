@@ -19,11 +19,6 @@
       }
     }
   ],
-  "configuration": {},
-  "connections": [],
-  "defaultSession": {
-    "name": "New Session"
-  },
   "tracks": [
     {
       "type": "FeatureTrack",
@@ -47,5 +42,69 @@
         "canonical_core"
       ]
     }
-  ]
+  ],
+  "defaultSession": {
+    "id": "JG4Hcs7ndy",
+    "name": "DDB0166986",
+    "views": [
+      {
+        "id": "pZI_clxZb5",
+        "type": "LinearGenomeView",
+        "tracks": [
+          {
+            "id": "IPemiTt--j",
+            "type": "ReferenceSequenceTrack",
+            "configuration": "canonical_core-ReferenceSequenceTrack",
+            "displays": [
+              {
+                "id": "gy5QqGpOnU",
+                "type": "LinearReferenceSequenceDisplay",
+                "heightPreConfig": 50,
+                "configuration": "canonical_core-ReferenceSequenceTrack-LinearReferenceSequenceDisplay"
+              }
+            ]
+          },
+          {
+            "id": "OV4w4WgZTX",
+            "type": "FeatureTrack",
+            "configuration": "DDB0166986.gff.sorted.gff3",
+            "displays": [
+              {
+                "id": "eZ87ofPQ-c",
+                "type": "LinearBasicDisplay",
+                "configuration": "DDB0166986.gff.sorted.gff3-LinearBasicDisplay"
+              }
+            ]
+          }
+        ],
+        "bpPerPx": 4437.930293501048,
+        "displayedRegions": [
+          {
+            "reversed": false,
+            "refName": "DDB0166986",
+            "start": 0,
+            "end": 8467571,
+            "assemblyName": "canonical_core"
+          }
+        ]
+      }
+    ],
+    "focusedViewId": "pZI_clxZb5",
+    "sessionPlugins": [],
+    "widgets": {
+      "GridBookmark": {
+        "id": "GridBookmark",
+        "type": "GridBookmarkWidget"
+      },
+      "hierarchicalTrackSelector": {
+        "id": "hierarchicalTrackSelector",
+        "type": "HierarchicalTrackSelectorWidget",
+        "view": "pZI_clxZb5",
+        "faceted": {}
+      }
+    },
+    "activeWidgets": {
+      "hierarchicalTrackSelector": "hierarchicalTrackSelector"
+    }
+  }
 }
