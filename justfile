@@ -5,7 +5,7 @@ default_port := "3000"
 # Start local development: load config and run the dev server
 dev: load-config serve
 
-# Copy local config into the jbrowse2 output directory
+# Copy shared config into the jbrowse2 output directory
 load-config:
   cp ./config.json {{jbrowse_dir}}/config.json
 
@@ -44,10 +44,6 @@ sort-gff gff3_file:
     {{gff3_file}} \
     | bgzip > {{gff3_file}}.sorted.gff3.gz
   echo {{gff3_file}}.sorted.gff3.gz
-
-# Copy the production config into the jbrowse2 output directory
-load-config:
-  cp ./config.json {{jbrowse_dir}}/config.json
 
 # Scaffold a fresh JBrowse2 instance, remove test data, and apply the production config
 create:
