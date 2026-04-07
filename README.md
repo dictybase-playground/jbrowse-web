@@ -39,8 +39,8 @@ The repo includes sample data (`test_data/canonical_core.fa`, `test_data/DDB0166
 **1. Clone and enter the repo**
 
 ```sh
-git clone <repo-url>
-cd jbrowse-launch
+git clone https://github.com/dictybase-playground/jbrowse-web.git
+cd jbrowse-web
 ```
 
 **2. Install dependencies**
