@@ -52,14 +52,14 @@ bun install
 **3. Start the dev server**
 
 ```sh
-just dev
+just serve
 ```
 
 Loads `config.json` into `jbrowse2/config.json` and starts the server. Open `http://localhost:3000`.
 
 ## Adding Data Files
 
-Place new files in `test_data/`, then use the commands below to index them and register them in `config.json`. Run `just dev` afterward to reload the config.
+Place new files in `test_data/`, then use the commands below to index them and register them in `config.json`. Run `just serve` afterward to reload the config.
 
 #### FASTA
 
@@ -82,9 +82,9 @@ Sorts the GFF3 by chromosome and position, compresses it with `bgzip` (producing
 | File | Purpose |
 |---|---|
 | `config.json` | JBrowse config; committed, references `test_data/` |
-| `jbrowse2/config.json` | Active config loaded by the app; overwritten by `just dev` |
+| `jbrowse2/config.json` | Active config loaded by the app; overwritten by `just serve` |
 
-`just load-config` copies `config.json` → `jbrowse2/config.json`.
+`just serve` runs `load-config` automatically before starting the server.
 
 ## Static Server
 
