@@ -55,7 +55,7 @@ bun install
 just serve
 ```
 
-Loads `config.json` into `jbrowse2/config.json` and starts the server. Open `http://localhost:3000`.
+Loads `config.json` into `jbrowse2/config.json` and starts the server. Open `http://localhost:3000` in your browser — you should see a linear genome view of chromosome `DDB0166986` with the reference sequence and gene feature tracks already loaded.
 
 ## Adding Data Files
 
