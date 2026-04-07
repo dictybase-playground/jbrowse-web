@@ -34,7 +34,7 @@ jbrowse-launch/
 
 ## Start
 
-The repo includes sample data (`test_data/canonical_core.fa`, `test_data/DDB0166986.gff`) and a `config.json` that references them, so no data setup is needed.
+The repo includes sample data (`test_data/canonical_core.fa`, `test_data/DDB0166986.gff.sorted.gff3.gz`, `test_data/DDB0166986.gff.sorted.gff3.gz.tbi`) and a `config.json` that references them, so no data setup is needed.
 
 **1. Clone and enter the repo**
 
