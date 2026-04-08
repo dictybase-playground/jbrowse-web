@@ -1,0 +1,12 @@
+{
+  "name": "plugins",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "devDependencies": {
+    "@jbrowse/core": "^4.1.15",
+    "vite": "^8.0.7"
+  }
+}

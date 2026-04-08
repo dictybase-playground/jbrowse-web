@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "serve": "bun run index.ts"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0"
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "fp-ts": "^2.16.11",
+    "hono": "^4.12.9"
+  }
+}

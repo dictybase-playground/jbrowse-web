@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "outputs": ["../jbrowse2/plugins/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "serve": {
+      "persistent": true,
+      "cache": false
+    }
+  }
+}

@@ -1,26 +1,16 @@
 {
   "name": "jbrowse-launch",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "packageManager": "bun@1.3.11",
+  "workspaces": ["plugins", "server"],
   "scripts": {
-    "lint": "oxlint server/",
-    "format": "oxfmt server/",
-    "check": "bun run --sequential lint format",
     "create": "bun run jbrowse create",
     "aa": "bun run jbrowse add-assembly",
     "at": "bun run jbrowse add-track",
-    "sort-gff": "bun run jbrowse sort-gff",
-    "serve": "bun run server/cli.ts"
+    "sort-gff": "bun run jbrowse sort-gff"
   },
   "devDependencies": {
     "@jbrowse/cli": "^4.1.13",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0"
-  },
-  "dependencies": {
-    "commander": "^14.0.3",
-    "fp-ts": "^2.16.11",
-    "hono": "^4.12.9"
+    "turbo": "^2.9.5"
   }
 }
