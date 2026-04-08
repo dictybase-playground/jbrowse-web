@@ -11,6 +11,5 @@
   },
   "devDependencies": {
     "@jbrowse/cli": "^4.1.13",
-    "turbo": "^2.9.5"
   }
 }
