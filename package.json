@@ -10,6 +10,6 @@
     "sort-gff": "bun run jbrowse sort-gff"
   },
   "devDependencies": {
-    "@jbrowse/cli": "^4.1.13",
+    "@jbrowse/cli": "^4.1.13"
   }
 }
