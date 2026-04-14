@@ -1,4 +1,10 @@
 {
+  "plugins": [
+    {
+      "name": "GeneInfo",
+      "esmLoc": { "uri": "plugins/dist/plugins.esm.js" }
+    }
+  ],
   "assemblies": [
     {
       "name": "canonical_core",
