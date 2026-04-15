@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup --config",
-    "dev": "vite build --watch"
+    "build:vite": "vite build"
   },
   "devDependencies": {
     "@jbrowse/core": "^4.1.15",
