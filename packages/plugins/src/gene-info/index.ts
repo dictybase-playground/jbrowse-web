@@ -1,5 +1,6 @@
 import type PluginManager from "@jbrowse/core/PluginManager"
-import { TestComponent } from "./components"
+
+import { GeneInfoPanel } from "./components"
 
 
 type Feature = {
@@ -27,11 +28,13 @@ export default class GeneInfoPlugin {
   install(pluginManager: PluginManager) {
     pluginManager.addToExtensionPoint(
       "Core-extraFeaturePanel",
-      () => {
-          return { name: "Gene Info", Component: TestComponent }
+      (DefaultExtraFeature, { model, feature}) => {
+        console.log({model, feature})
+        if (model.trackType === "FeatureTrack" && feature.type === "gene") {
+          return { name: "Gene Info", Component: GeneInfoPanel }
+        }
+        return DefaultExtraFeature
       },
     )
   }
-
-  configure(_pluginManager: PluginManager) {}
 }
