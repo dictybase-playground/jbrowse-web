@@ -2,7 +2,7 @@
   "plugins": [
     {
       "name": "GeneInfo",
-      "esmLoc": { "uri": "plugins/dist/plugins.esm.js" }
+      "esmLoc": { "uri": "plugins/dist/testplugin.js" }
     }
   ],
   "assemblies": [
