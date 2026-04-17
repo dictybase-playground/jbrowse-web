@@ -2,7 +2,7 @@
   "name": "jbrowse-launch",
   "private": true,
   "packageManager": "bun@1.3.11",
-  "workspaces": ["plugins", "server"],
+  "workspaces": ["packages/*"],
   "scripts": {
     "create": "bun run jbrowse create",
     "aa": "bun run jbrowse add-assembly",

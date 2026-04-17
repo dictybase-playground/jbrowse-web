@@ -1,0 +1,69 @@
+{
+  input: '/home/faceless/repositories/dictybase-playground/jbrowse-web/plugins/src/index.ts',
+  external: [Function: external],
+  treeshake: { propertyReadSideEffects: false, moduleSideEffects: false },
+  plugins: [
+    {
+      name: 'node-resolve',
+      version: '13.3.0',
+      buildStart: [Function: buildStart],
+      generateBundle: [Function: generateBundle],
+      resolveId: [AsyncFunction: resolveId],
+      load: [Function: load],
+      getPackageInfoForId: [Function: getPackageInfoForId]
+    },
+    {
+      name: 'commonjs',
+      buildStart: [Function: buildStart],
+      resolveId: [Function: resolveId],
+      load: [Function: load],
+      transform: [Function: transform],
+      moduleParsed: [Function: moduleParsed]
+    },
+    { name: 'json', transform: [Function: transform] },
+    {
+      name: 'typescript',
+      buildStart: [Function: buildStart],
+      watchChange: [Function: watchChange],
+      buildEnd: [Function: buildEnd],
+      renderStart: [Function: renderStart],
+      resolveId: [Function: resolveId],
+      load: [AsyncFunction: load],
+      generateBundle: [AsyncFunction: generateBundle]
+    },
+    {
+      name: 'rollup-plugin-external-globals',
+      transform: [Function: transform]
+    },
+    {
+      name: 'babel',
+      options: [Function: options],
+      resolveId: [Function: resolveId],
+      load: [Function: load],
+      transform: [Function: transform]
+    },
+    {
+      name: 'polyfill-node',
+      resolveId: [Function: resolveId],
+      load: [Function: load],
+      transform: [Function: transform]
+    },
+    {
+      name: 'logger',
+      resolveId: [AsyncFunction: resolveId],
+      load: [Function: load]
+    }
+  ],
+  output: [
+    {
+      file: '/home/faceless/repositories/dictybase-playground/jbrowse-web/plugins/dist/plugins.esm.js',
+      format: 'esm',
+      freeze: false,
+      esModule: true,
+      sourcemap: true,
+      exports: 'named',
+      inlineDynamicImports: true
+    }
+  ],
+  watch: { clearScreen: false }
+}

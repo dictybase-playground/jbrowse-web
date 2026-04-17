@@ -30,7 +30,7 @@ const GRAPHQL_URL = "https://graphql.dictybase.dev/graphql"
 
 const TestComponent = () => {
   const [info] = useState<GeneInfo | null>(null)
-  return <>{info}</>
+  return <> This is a test component </>
 }
 
 const Component = () => {

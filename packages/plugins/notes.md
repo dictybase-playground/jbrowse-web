@@ -1,0 +1,6 @@
+- Do I even need a build step?
+  - Tree-shaking of dependencies
+- What are plugins for, exactly.
+- What plugins are necessary
+- What has changed from Rollup 3 to 4?
+- Is the config directly compatible with Vite/Rolldown?

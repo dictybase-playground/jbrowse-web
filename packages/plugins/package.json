@@ -16,5 +16,9 @@
     "react": "^19.2.4",
     "rollup": "^4.60.1",
     "vite": "^8.0.7"
+  },
+  "dependencies": {
+    "fp-ts": "^2.16.11",
+    "rollup-plugin-external-globals": "^0.13.0"
   }
 }
