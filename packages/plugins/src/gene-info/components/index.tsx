@@ -52,8 +52,8 @@ const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
 
   return (
     <div>
-      <p>{info.description}</p>
-      <p>{info.gene_product}</p>
+      <p>Description: {info.description}</p>
+      <p>Gene Product: {info.gene_product}</p>
     </div>
   )
 }
