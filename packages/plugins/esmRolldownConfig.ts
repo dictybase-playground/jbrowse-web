@@ -13,7 +13,7 @@ const globalsMap = pipe(
 )
 
 export default {
-  input: ["plugins/src/index.ts"],
+  input: ["plugins/src/gene-info/index.ts"],
   external: isExternal, // not sure if necessary.
   treeshake: { propertyReadSideEffects: false, moduleSideEffects: false },
   plugins: [externalGlobals(globalsMap)],
@@ -22,11 +22,10 @@ export default {
       dir: "./dist",
       entryFileNames: "testplugin.js",
       format: 'esm',
-      freeze: false,
       esModule: true,
-      sourcemap: true,
+      sourcemap: false,
       exports: 'named',
-      inlineDynamicImports: true,
+      codeSplitting: false,
     },
   ],
   watch: { clearScreen: false},
