@@ -7,8 +7,10 @@ root := justfile_directory()
 load-config:
   cp ./config.json {{jbrowse_dir}}/config.json
 
+load-plugins:
+  cp -r packages/plugins/dist {{jbrowse_dir}}/plugins
 # Load config and run the dev server
-serve port=default_port: load-config
+serve port=default_port: load-config load-plugins
   bun run --filter server serve -- {{root}}/{{jbrowse_dir}} {{root}}/{{assets_dir}} -p {{port}}
 
 # Index a local FASTA file and add its assembly to config.json
