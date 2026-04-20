@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { match } from "ts-pattern"
+import { useState, useEffect } from "react"
+import { match, P } from "ts-pattern"
 
 type Feature = {
   id: string
@@ -29,7 +29,6 @@ const geneInfoQuery = (gene: string) => ({
 
 const GRAPHQL_URL = "https://graphql.dictybase.dev/graphql"
 
-
 const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
   const [info, setInfo] = useState<GeneInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -49,14 +48,18 @@ const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
     fetchGeneInfo()
   }, [geneName])
 
-  if (loading) return <div>Loading...</div>
-
-  return (
-    <div>
-      <p>Description: {info.description}</p>
-      <p>Gene Product: {info.gene_product}</p>
-    </div>
-  )
+  return match({ loading, info })
+    .with({ loading: true }, () => <div>Loading...</div>)
+    .with({ info: P.select(P.nonNullable) }, (info) => {
+      console.log(info)
+        return (
+            <div>
+                <p>Description: {info.description}</p>
+                <p>Gene Product: {info.gene_product}</p>
+            </div>
+        )
+    })
+    .otherwise(() => <></>)
 }
 
 export { GeneInfoPanel }
