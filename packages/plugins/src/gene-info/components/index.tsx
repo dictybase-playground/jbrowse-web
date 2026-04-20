@@ -1,5 +1,5 @@
-import type PluginManager from "@jbrowse/core/PluginManager"
 import React, { useState, useEffect } from "react"
+import { match } from "ts-pattern"
 
 type Feature = {
   id: string
@@ -32,7 +32,7 @@ const GRAPHQL_URL = "https://graphql.dictybase.dev/graphql"
 
 const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
   const [info, setInfo] = useState<GeneInfo | null>(null)
-  console.log(feature)
+  const [loading, setLoading] = useState(true)
   const geneName = feature.id
 
   useEffect(() => {
@@ -43,12 +43,13 @@ const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
         headers: { "Content-Type": "application/json" },
       })
       const { data } = await response.json()
+      setLoading(false)
       setInfo(data.geneGeneralInformation)
     }
     fetchGeneInfo()
   }, [geneName])
 
-  if (!info) return <div>Loading...</div>
+  if (loading) return <div>Loading...</div>
 
   return (
     <div>
