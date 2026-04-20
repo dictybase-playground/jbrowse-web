@@ -11,19 +11,20 @@
     "packages/plugins": {
       "name": "plugins",
       "dependencies": {
-        "fp-ts": "^2.16.11",
-        "mobx-react": "^9.2.1",
-        "rollup-plugin-external-globals": "^0.13.0",
+        "ts-pattern": "^5.9.0",
       },
       "devDependencies": {
         "@jbrowse/core": "^4.1.15",
         "@jbrowse/development-tools": "^2.2.1",
         "@types/react": "^19.2.14",
         "@vitejs/plugin-react": "^6.0.1",
+        "fp-ts": "^2.16.11",
         "mobx": "^6.15.0",
+        "mobx-react": "^9.2.1",
         "mobx-state-tree": "^7.2.0",
         "react": "^19.2.4",
         "rollup": "^4.60.1",
+        "rollup-plugin-external-globals": "^0.13.0",
         "vite": "^8.0.7",
       },
     },
@@ -1058,6 +1059,8 @@
     "toidentifier": ["toidentifier@1.0.1", "", {}, "sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA=="],
 
     "ts-essentials": ["ts-essentials@9.4.2", "", { "peerDependencies": { "typescript": ">=4.1.0" }, "optionalPeers": ["typescript"] }, "sha512-mB/cDhOvD7pg3YCLk2rOtejHjjdSi9in/IBYE13S+8WA5FBSraYf4V/ws55uvs0IvQ/l0wBOlXy5yBNZ9Bl8ZQ=="],
+
+    "ts-pattern": ["ts-pattern@5.9.0", "", {}, "sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg=="],
 
     "tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
