@@ -1,5 +1,6 @@
+import { RolldownOptions } from "vite"
 import { isExternal } from "./isExternal"
-import jbrowseGlobals from '@jbrowse/core/ReExports/list'
+import jbrowseGlobals from "@jbrowse/core/ReExports/list"
 import externalGlobals from "rollup-plugin-external-globals"
 import { pipe } from "fp-ts/function"
 import { map as Amap } from "fp-ts/Array"
@@ -9,10 +10,10 @@ const globalsMap = pipe(
   jbrowseGlobals,
   Amap((id): [string, string] => [id, id]),
   RfromEntries,
-  Rmap((global) => `JBrowseExports["${global}"]`)
+  Rmap((global) => `JBrowseExports["${global}"]`),
 )
 
-export default {
+const rollDownOptions: RolldownOptions = {
   input: ["plugins/src/gene-info/index.ts"],
   external: isExternal, // not sure if necessary.
   treeshake: { propertyReadSideEffects: false, moduleSideEffects: false },
@@ -21,12 +22,14 @@ export default {
     {
       dir: "./dist",
       entryFileNames: "testplugin.js",
-      format: 'esm',
+      format: "esm",
       esModule: true,
       sourcemap: false,
-      exports: 'named',
+      exports: "named",
       codeSplitting: false,
     },
   ],
-  watch: { clearScreen: false},
+  watch: { clearScreen: false },
 }
+
+export { rollDownOptions }
