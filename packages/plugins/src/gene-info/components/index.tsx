@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { match, P } from "ts-pattern"
 
 type Feature = {
   id: string
 }
-
 type GeneInfo = {
   id: string
   name_description: string[]
