@@ -36,18 +36,20 @@ const MyWidgetModel = pluginManager.lib["mobx-state-tree"].types
     type: types.literal("MyWidget"),
     featureName: types.maybe(types.string),
   })
-  .actions(self => ({
-    setFeatureName(name) { self.featureName = name },
+  .actions((self) => ({
+    setFeatureName(name) {
+      self.featureName = name
+    },
   }))
 ```
 
 Models have three sections:
 
-| Section | Purpose |
-|---------|---------|
-| `types.model(...)` | Declares the shape of the data (typed properties) |
-| `.actions(self => ...)` | Functions that are allowed to mutate state |
-| `.views(self => ...)` | Derived/computed values, like getters |
+| Section                 | Purpose                                           |
+| ----------------------- | ------------------------------------------------- |
+| `types.model(...)`      | Declares the shape of the data (typed properties) |
+| `.actions(self => ...)` | Functions that are allowed to mutate state        |
+| `.views(self => ...)`   | Derived/computed values, like getters             |
 
 ## React components
 
@@ -59,9 +61,11 @@ const { React } = pluginManager.lib
 
 const MyWidgetComponent = observer(({ model }) => (
   <div>
-    {model.featureName
-      ? <p>Selected: {model.featureName}</p>
-      : <p>Click a feature</p>}
+    {model.featureName ? (
+      <p>Selected: {model.featureName}</p>
+    ) : (
+      <p>Click a feature</p>
+    )}
   </div>
 ))
 ```
