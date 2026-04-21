@@ -51,12 +51,12 @@ const GeneInfoPanel = ({ feature }: { feature: Feature }) => {
     .with({ loading: true }, () => <div>Loading...</div>)
     .with({ info: P.select(P.nonNullable) }, (info) => {
       console.log(info)
-        return (
-            <div>
-                <p>Description: {info.description}</p>
-                <p>Gene Product: {info.gene_product}</p>
-            </div>
-        )
+      return (
+        <div>
+          <p>Description: {info.description}</p>
+          <p>Gene Product: {info.gene_product}</p>
+        </div>
+      )
     })
     .otherwise(() => <></>)
 }
