@@ -1,1 +1,1 @@
-export { default } from './gene-info/index.js'
+export { default } from "./gene-info/index.js"

@@ -8,8 +8,8 @@ export default class GeneInfoPlugin {
   install(pluginManager: PluginManager) {
     pluginManager.addToExtensionPoint(
       "Core-extraFeaturePanel",
-      (DefaultExtraFeature, { model, feature}) => {
-        console.log({model, feature})
+      (DefaultExtraFeature, { model, feature }) => {
+        console.log({ model, feature })
         if (model.trackType === "FeatureTrack" && feature.type === "gene") {
           return { name: "Gene Info", Component: GeneInfoPanel }
         }
