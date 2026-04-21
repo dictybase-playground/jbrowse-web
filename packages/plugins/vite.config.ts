@@ -1,6 +1,6 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
-import rolldownOptions from "./esmRolldownConfig"
+import { rolldownOptions } from "./esmRolldownConfig"
 
 export default defineConfig({
   plugins: [react({ jsxRuntime: "classic" })],
@@ -13,6 +13,6 @@ export default defineConfig({
     },
     outDir: "../jbrowse2/plugins",
     emptyOutDir: false,
-    rolldownOptions
+    rolldownOptions,
   },
 })
