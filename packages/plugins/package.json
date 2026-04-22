@@ -19,7 +19,7 @@
     "mobx-react": "^9.2.1",
     "mobx-state-tree": "^7.2.0",
     "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0",
+    "oxlint": "^1.61.0",
     "react": "^19.2.4",
     "rollup": "^4.60.1",
     "rollup-plugin-external-globals": "^0.13.0",
