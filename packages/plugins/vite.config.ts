@@ -1,6 +1,6 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
-import { rolldownOptions } from "./esmRolldownConfig"
+import { rolldownOptions } from "./rolldown.config.ts"
 
 export default defineConfig({
   plugins: [react({ jsxRuntime: "classic" })],
@@ -9,9 +9,7 @@ export default defineConfig({
       entry: {
         "gene-info": "gene-info/index.tsx",
       },
-      formats: ["es"],
     },
-    outDir: "../jbrowse2/plugins",
     emptyOutDir: false,
     rolldownOptions,
   },
