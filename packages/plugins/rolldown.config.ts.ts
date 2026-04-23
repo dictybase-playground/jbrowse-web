@@ -1,4 +1,4 @@
-import { RolldownOptions } from "vite"
+import {  ResolvedBuildEnvironmentOptions } from "vite"
 import { isExternal } from "./isExternal"
 import jbrowseGlobals from "@jbrowse/core/ReExports/list"
 import externalGlobals from "rollup-plugin-external-globals"
@@ -13,7 +13,7 @@ const globalsMap = pipe(
   Rmap((global) => `JBrowseExports["${global}"]`),
 )
 
-const rollDownOptions: RolldownOptions = {
+const rolldownOptions: ResolvedBuildEnvironmentOptions["rolldownOptions"] = {
   input: ["plugins/src/gene-info/index.ts"],
   external: isExternal, // not sure if necessary.
   treeshake: { propertyReadSideEffects: false, moduleSideEffects: false },
@@ -32,4 +32,4 @@ const rollDownOptions: RolldownOptions = {
   watch: { clearScreen: false },
 }
 
-export { rollDownOptions }
+export { rolldownOptions }
