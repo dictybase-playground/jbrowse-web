@@ -1,5 +1,8 @@
 import type PluginManager from "@jbrowse/core/PluginManager"
 import { GeneInfoPanel } from "./components"
+import { unknownHasTrackType, unknownHasType } from "./utils"
+import { pipe } from "fp-ts/function"
+import { MonoidAll as BMonoidAll, match as Bmatch } from "fp-ts/boolean"
 
 export default class GeneInfoPlugin {
   name = "GeneInfo"
@@ -9,13 +12,19 @@ export default class GeneInfoPlugin {
     pluginManager.addToExtensionPoint(
       "Core-extraFeaturePanel",
       (DefaultExtraFeature, { model, feature }) => {
-        if (model.trackType === "FeatureTrack" && feature.type === "gene") {
-          return { name: "Gene Info", Component: GeneInfoPanel }
-        }
-        return DefaultExtraFeature
+        return pipe(
+          BMonoidAll.concat(
+            unknownHasTrackType(model),
+            unknownHasType(feature),
+          ),
+          Bmatch(
+            () => DefaultExtraFeature,
+            () => ({ name: "Gene Info", Component: GeneInfoPanel }),
+          ),
+        )
       },
     )
   }
 
-  configure(_pluginManager: PluginManager) {}
+  configure() {}
 }
