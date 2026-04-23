@@ -1,14 +1,17 @@
 jbrowse_dir := "jbrowse2"
 assets_dir := "test_data"
 default_port := "3000"
+root := justfile_directory()
 
 # Copy shared config into the jbrowse2 output directory
 load-config:
   cp ./config.json {{jbrowse_dir}}/config.json
 
+load-plugins:
+  cp -r packages/plugins/dist {{jbrowse_dir}}/plugins
 # Load config and run the dev server
-serve port=default_port: load-config
-  bun serve {{jbrowse_dir}} {{assets_dir}} -p {{port}}
+serve port=default_port: load-config load-plugins
+  bun run --filter server serve -- {{root}}/{{jbrowse_dir}} {{root}}/{{assets_dir}} -p {{port}}
 
 # Index a local FASTA file and add its assembly to config.json
 # Usage: just add-assembly <fasta_file>
@@ -41,6 +44,10 @@ sort-gff gff3_file:
     {{gff3_file}} \
     | bgzip > {{gff3_file}}.sorted.gff3.gz
   echo {{gff3_file}}.sorted.gff3.gz
+
+# Build all plugins
+build-plugins:
+  bun run --filter plugins build
 
 # Scaffold a fresh JBrowse2 instance, remove test data, and apply the production config
 create:
